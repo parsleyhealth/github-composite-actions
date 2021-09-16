@@ -1,6 +1,6 @@
 # tag-draft-release
 
-Composite Github Action that creates a tag based on a properties file and a draft release including content from CHANGELOG.md
+Composite Github Action that creates a tag based on a properties file and a draft release including content from `CHANGELOG.md`
 
 ## Usage
 
@@ -18,15 +18,15 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Tag and Create Draft Release
-      uses: chiefy/composite-actions/tag-create-draft-release@main
+      uses: parsleyhealth/composite-actions/tag-create-draft-release@v1
       with:
         semver-file: 'version.txt'
         use-v: false # do you want `v1.0.0` or `1.0.0`
         changelog: ./CHANGELOG.md # defaults to this
     - name: Tag and Create Draft Release with overridden version
-      uses: chiefy/composite-actions/tag-create-draft-release@main
+      uses: parsleyhealth/composite-actions/tag-create-draft-release@v1
       with:
-        semver: '1.0.2' # use an output to grab this from somewhere else
+        semver: '1.0.2' # or use an output to inject this from somewhere else
         use-v: true # will create `v1.0.2` tag
 ```
 
