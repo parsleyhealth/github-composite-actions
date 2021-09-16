@@ -1,0 +1,61 @@
+name: 'Tag and Create Draft Release'
+description: 'Creates and pushes a tag, then creates a draft release with content from a `CHANGELOG.md` file'
+inputs:
+  semver-file:  # file to use for semver tag
+    description: 'Relative path to file to use for version, uses `awk -F =` so use version=x.x.x formatting'
+    required: false
+    default: 'false'
+  semver:  # semver override
+    description: 'Semver to use for tag, overrides any semver-file specified'
+    required: false
+    default: 'false'
+  changelog:  #path to `CHANGELOG.md`
+    description: 'Path to CHANGELOG.md, defaults to root of repo'
+    required: false
+    default: './CHANGELOG.md'
+  use-v:  # prefix semver with 'v'?
+    description: 'Prefix version with "v?"'
+    required: false
+    default: 'false'
+  release-branches:
+    description: 'Comma separated list of branches that will generate a release'
+    required: false
+    default: 'main,master'
+
+outputs:
+  tag:
+    description: "Generated tag for draft release"
+    value: ${{ steps.get-semver.outputs.tag }}
+  draft-release-url:
+    description: "URL of the newly created draft release"
+    value: ${{ steps.release-action.outputs.html_url }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Version for Tag
+      run: ${{ github.action_path }}/get-semver.sh ${{ inputs.semver }} ${{ github.workspace }}/${{ inputs.semver-file }} ${{ inputs.use-v }}
+      id: get-semver
+      shell: bash
+    - name: Push New Tag
+      uses: anothrNick/github-tag-action@1.36.0
+      env:
+        GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+        WITH_V: ${{ inputs.use-v }}
+        RELEASE_BRANCHES: ${{ inputs.release-branches }}
+        CUSTOM_TAG: ${{ steps.get-semver.outputs.tag }}
+    - name: Get Changelog Entry
+      id: changelog-reader
+      uses: mindsers/changelog-reader-action@v2
+      with:
+        validation_depth: 10
+        version: ${{ steps.get-semver.outputs.tag }}
+        path: ${{ github.workspace }}/${{ inputs.changelog }}
+    - name: Create Draft Release
+      id: release-action
+      uses: ncipollo/release-action@v1
+      with:
+        draft: true
+        tag: ${{ steps.get-semver.outputs.tag }}
+        body: ${{ steps.changelog-reader.outputs.changes }}        
+        token: ${{ env.GITHUB_TOKEN }}
