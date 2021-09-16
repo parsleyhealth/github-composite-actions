@@ -1,0 +1,27 @@
+name: "Tag and Draft Release"
+
+on:
+  push:
+    branches:
+      - main 
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  create-draft-release:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    
+    - name: Tag and Draft Release
+      uses: parsleyhealth/github-composite-actions/tag-draft-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        semver-file: version.txt
