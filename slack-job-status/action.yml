@@ -1,10 +1,10 @@
-name: 'Slack Job Status'
+name: "Slack Job Status"
 description: "Creates outputs based on the workflow's job status usable with [voxmedia/github-action-slack-notify-build](https://github.com/voxmedia/github-action-slack-notify-build)"
 inputs:
   job-description:
-    description: 'Description of job to display in Slack notification'
+    description: "Description of job to display in Slack notification"
     required: false
-    default: ''
+    default: ""
 outputs:
   status:
     description: "Text status of job for notification"

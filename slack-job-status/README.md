@@ -32,7 +32,7 @@ jobs:
     - name: Set status for Slack notification
       if: always()
       id: slack-status
-      uses: parsleyhealth/github-composite-actions/slack-job-status@v1
+      uses: parsleyhealth/github-composite-actions/slack-job-status@main
       with:
         job-description: Staging K8s Deploy of Thing
     - name: Slack notification results

@@ -1,0 +1,33 @@
+name: "Get service name and URL for PR"
+description: "Creates outputs for unique service and hostname"
+
+inputs:
+  service-type:
+    description: "Type of service"
+    required: false
+    default: "default"
+  service-id:
+    description: "Unique ID to use with service name and hostname (pr number, git sha, etc)"
+    required: true
+  domain:
+    description: "Root domain to use for service subdomains"
+    required: true
+
+outputs:
+  url:
+    description: "Hostname of service endpoint based on PR"
+    value: https://${{ steps.service-name.outputs.name }}.${{ inputs.domain }}
+  hostname:
+    description: "Hostname of service endpoint based on PR"
+    value: ${{ steps.service-name.outputs.name }}.${{ inputs.domain }}
+  name:
+    description: "Unique name of service based on PR"
+    value: ${{ steps.service-name.outputs.name }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set preview service name and URL
+      shell: bash
+      id: service-name
+      run: echo "::set-output name=name::${{ inputs.service-type }}-${{ inputs.service-id }}"

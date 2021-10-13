@@ -24,7 +24,7 @@ jobs:
         use-v: false # do you want `v1.0.0` or `1.0.0`
         changelog: ./CHANGELOG.md # defaults to this
     - name: Tag and Create Draft Release with overridden version
-      uses: parsleyhealth/composite-actions/tag-create-draft-release@v1
+      uses: parsleyhealth/composite-actions/tag-create-draft-release@main
       with:
         semver: '1.0.2' # or use an output to inject this from somewhere else
         use-v: true # will create `v1.0.2` tag
