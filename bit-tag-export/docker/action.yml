@@ -1,0 +1,21 @@
+name: "Tag and Export Bit Component"
+description: "Tags and exports bit component"
+
+inputs:
+  docker-image-tag:
+    description: "Image tag to use for bitcli/bit-non-root docker image"
+    required: false
+    default: "latest-node-16.15.0"
+  bit-token:
+    description: "Bit token to use for interaction with bit service"
+    required: true
+
+outputs:
+  changes:
+    description: "List of changes to output to Slack channel"
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.bit-token }}
