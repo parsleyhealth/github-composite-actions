@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2022-6-24
+
+### Added
+
+- added bit-tag-export composite/docker action
+
 ## [1.2.0] - 2021-10-13
 
 ### Added
