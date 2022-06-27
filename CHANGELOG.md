@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2022-6-27
+
+### fixed
+
+- fixed non-root chmod issue
+
 ## [2.0.0] - 2022-6-24
 
 ### Added
