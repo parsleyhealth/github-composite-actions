@@ -21,7 +21,7 @@ runs:
   steps:
     - name: Run bit export
       id: tagexport
-      uses: ./docker
+      uses: parsleyhealth/github-composite-actions/bit-tag-export/docker@main
       with:
         docker-image-tag: ${{ inputs.docker-image-tag }}
         bit-token: ${{ inputs.bit-token }}

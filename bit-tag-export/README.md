@@ -9,9 +9,10 @@ Composite Github Action for tagging and exporting Bit components.
 name: Tag and Export Components
 
 on:
-  pull_request:
-    branches: [master]
-
+  push:
+    branches:
+      - master
+      
 jobs:
   tag-and-export:
     runs-on: ubuntu-latest
