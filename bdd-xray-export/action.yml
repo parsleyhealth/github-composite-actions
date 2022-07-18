@@ -25,6 +25,11 @@ inputs:
     description: "Github token for uploading artifacts etc."
     required: true
 
+outputs:
+  test_exec_key:
+    description: "The key of the created test execution"
+    value: ${{ steps.xray-import.outputs.testExecKey }}
+
 runs:
   using: composite
   steps:
@@ -82,7 +87,8 @@ runs:
         retention-days: 7
 
     - name: Import results to Xray
-      uses: mikepenz/xray-action@v2
+      uses: parsleyhealth/xray-action@main
+      id: xray-import
       with:
         username: ${{ inputs.xray-client-id }}
         password: ${{ inputs.xray-client-secret }}
