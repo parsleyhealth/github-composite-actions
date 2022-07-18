@@ -36,5 +36,6 @@ jobs:
 - **node-version**: NodeJS version to use with action (default:lts/gallium)
 - **xray-client-id**: Xray client ID
 - **xray-client-secret**: Xray client secret
+- **github-token**: Github token for uploading artifacts etc.
 
 ## Outputs

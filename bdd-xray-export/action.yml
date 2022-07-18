@@ -21,6 +21,9 @@ inputs:
   xray-client-secret:
     description: "Xray client secret"
     required: true
+  github-token:
+    description: "Github token for uploading artifacts etc."
+    required: true
 
 runs:
   using: composite
@@ -66,15 +69,15 @@ runs:
     - name: Github Annotation Report
       uses: deblockt/cucumber-report-annotations-action@v1.7
       with:
-        name: Cucumber report ${{ input.browser }}
-        access-token: ${{ secrets.GITHUB_TOKEN }}
+        name: Cucumber report ${{ inputs.browser }}
+        access-token: ${{ inputs.github-token }}
         path: reports/cucumber-report.json
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: cucumber-report-${{ input.browser }}
+        name: cucumber-report-${{ inputs.browser }}
         path: reports
         retention-days: 7
 
