@@ -1,0 +1,89 @@
+name: "Cucumber BDD Test/Export"
+description: "Runs cucumber BDD tests and exports reports to x-ray"
+inputs:
+  project-id:
+    description: "JIRA project ID to use for tests"
+    required: true
+  browser:
+    description: "Browser engine to use with tests (chromium|firefox|webkit)"
+    required: true
+  record-video:
+    description: "Record BDD test execution video (default:true)"
+    required: false
+    default: "true"
+  node-version:
+    description: "NodeJS version to use (default:lts/gallium)"
+    required: false
+    default: "lts/gallium"
+  xray-client-id:
+    description: "Xray client ID"
+    required: true
+  xray-client-secret:
+    description: "Xray client secret"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+
+    - name: Cache Playwright
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/ms-playwright
+        key: playwright-${{ hashFiles('package-lock.json') }}
+
+    - name: Update Dependencies
+      shell: bash
+      run: npm run deps
+
+    - name: Run BDD Test
+      shell: bash
+      continue-on-error: true
+      env:
+        BROWSER: ${{ inputs.browser }}
+        RECORD_VIDEO: ${{ inputs.record-video }}
+      run: npm run cucumber-test
+
+    - name: Generate Cucumber Reports
+      shell: bash
+      env:
+        BROWSER: ${{ inputs.browser }}
+      run: |
+        npm run pretty-cucumber-report
+        npm run xray-cucumber-report
+
+    - name: Github Annotation Report
+      uses: deblockt/cucumber-report-annotations-action@v1.7
+      with:
+        name: Cucumber report ${{ input.browser }}
+        access-token: ${{ secrets.GITHUB_TOKEN }}
+        path: reports/cucumber-report.json
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: cucumber-report-${{ input.browser }}
+        path: reports
+        retention-days: 7
+
+    - name: Import results to Xray
+      uses: mikepenz/xray-action@v2
+      with:
+        username: ${{ inputs.xray-client-id }}
+        password: ${{ inputs.xray-client-secret }}
+        testFormat: cucumber
+        testPaths: "reports/*.json"
+        #testExecKey: "TEST-1"
+        projectKey: ${{ inputs.project-id }}
