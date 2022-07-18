@@ -106,12 +106,12 @@ runs:
           -Ss \
           -H "Content-Type: application/json" \
           --data $(jq -Mcrn \
-            --arg id ${{ secrets.XRAY_CLIENT_ID }} \
-            --arg sec ${{ secrets.XRAY_CLIENT_SECRET }} \
+            --arg id ${{ inputs..xray-client-id }} \
+            --arg sec ${{ inputs.xray-client-secret }} \
             '{ client_id: $id, client_secret: $sec }') \
             https://xray.cloud.getxray.app/api/v2/authenticate  \
           | tr -d '"' \
-        )
+        )"
 
     - name: "Import Execution Result To Xray"
       shell: bash
