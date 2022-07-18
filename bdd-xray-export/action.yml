@@ -86,13 +86,40 @@ runs:
         path: reports
         retention-days: 7
 
-    - name: Import results to Xray
-      uses: parsleyhealth/xray-action@main
-      id: xray-import
-      with:
-        username: ${{ inputs.xray-client-id }}
-        password: ${{ inputs.xray-client-secret }}
-        testFormat: cucumber
-        testPaths: "reports/*.json"
-        #testExecKey: "TEST-1"
-        projectKey: ${{ inputs.project-id }}
+    # this action doesn't seem to work at all w/ cucumber combined JSON
+    # - name: Import results to Xray
+    #   uses: parsleyhealth/xray-action@main
+    #   id: xray-import
+    #   with:
+    #     username: ${{ inputs.xray-client-id }}
+    #     password: ${{ inputs.xray-client-secret }}
+    #     testFormat: cucumber
+    #     testPaths: "reports/*.json"
+    #     #testExecKey: "TEST-1"
+    #     projectKey: ${{ inputs.project-id }}
+
+    - name: Get Xray Bearer Token
+      id: xray
+      shell: bash
+      run: |
+        echo "::set-output name=token::$(curl \
+          -Ss \
+          -H "Content-Type: application/json" \
+          --data $(jq -Mcrn \
+            --arg id ${{ secrets.XRAY_CLIENT_ID }} \
+            --arg sec ${{ secrets.XRAY_CLIENT_SECRET }} \
+            '{ client_id: $id, client_secret: $sec }') \
+            https://xray.cloud.getxray.app/api/v2/authenticate  \
+          | tr -d '"' \
+        )
+
+    - name: "Import Execution Result To Xray"
+      shell: bash
+      run: |
+        curl \
+          -Ss \
+          -H "Content-Type: multipart/form-data" \
+          -H "Authorization: Bearer ${{ steps.xray.outputs.token }}" \
+          -F info=@./reports/issueFields.json \
+          -F results=@./reports/cucumber-report.json \
+          https://xray.cloud.getxray.app/api/v2/import/execution/cucumber/multipart
