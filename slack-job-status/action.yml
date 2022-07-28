@@ -23,7 +23,7 @@ runs:
     - name: Get current status if provided
       shell: bash
       if: inputs.status != ''
-      run: echo "job_status=${{ inputs.status }}" | tr '[:lower:]' >> $GITHUB_ENV
+      run: echo "job_status=${{ inputs.status }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
 
     - name: Get current status if provided
       shell: bash
