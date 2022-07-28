@@ -20,23 +20,27 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Get current status from input
+    - name: Get current status if provided
       shell: bash
-      id: current-status
-      run: |
-        [ ! -z "${{ inputs.status }}" ] && echo "::set-output name=description::${{ inputs.status }}"
-        [ ! -z "${{ job.status }}" ] && echo "::set-output name=description::${{ job.status }}"
+      if: ${{ inputs.status != "" }}
+      run: echo "job_status=${{ inputs.status }}" | tr '[:lower:]' >> $GITHUB_ENV
+
+    - name: Get current status if provided
+      shell: bash
+      if: ${{ inputs.status == "" }}
+      run: echo "job_status=${{ job.status }}" >> $GITHUB_ENV
+
     - name: Get Job Status Slack Outputs
       id: slack-status
       shell: bash
       run: |
-        [ "${{ steps.current-status.outputs.description }}" = "cancelled" ] && \
+        [ "${JOB_STATUS}" = "cancelled" ] && \
           echo "::set-output name=color::warning" &&  \
           echo "::set-output name=status::${{ inputs.job-description }} Cancelled"
-        [ "${{ steps.current-status.outputs.description }}" = "success" ] && \
+        [ "${JOB_STATUS}" = "success" ] && \
           echo "::set-output name=color::good" && \
           echo "::set-output name=status::${{ inputs.job-description }} Success"
-        [ "${{ steps.current-status.outputs.description }}" = "failure" ] && \
+        [ "${JOB_STATUS}" = "failure" ] && \
           echo "::set-output name=color::danger" && \
           echo "::set-output name=status::${{ inputs.job-description }} Failed"
         exit 0
