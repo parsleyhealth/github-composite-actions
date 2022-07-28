@@ -5,6 +5,10 @@ inputs:
     description: "Description of job to display in Slack notification"
     required: false
     default: ""
+  status:
+    description: "The current status of the job or composite run, use `job.status` or `github.action_status` when inside a composite action"
+    required: false
+    default: ""
 outputs:
   status:
     description: "Text status of job for notification"
@@ -16,17 +20,27 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Get current status if provided
+      shell: bash
+      if: inputs.status != ''
+      run: echo "job_status=${{ inputs.status }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
+    - name: Get current status if provided
+      shell: bash
+      if: inputs.status == ''
+      run: echo "job_status=${{ job.status }}" >> $GITHUB_ENV
+
     - name: Get Job Status Slack Outputs
       id: slack-status
       shell: bash
       run: |
-        [ "${{ job.status }}" = "cancelled" ] && \
+        [ "${job_status}" = "cancelled" ] && \
           echo "::set-output name=color::warning" &&  \
           echo "::set-output name=status::${{ inputs.job-description }} Cancelled"
-        [ "${{ job.status }}" = "success" ] && \
+        [ "${job_status}" = "success" ] && \
           echo "::set-output name=color::good" && \
           echo "::set-output name=status::${{ inputs.job-description }} Success"
-        [ "${{ job.status }}" = "failure" ] && \
+        [ "${job_status}" = "failure" ] && \
           echo "::set-output name=color::danger" && \
           echo "::set-output name=status::${{ inputs.job-description }} Failed"
         exit 0
