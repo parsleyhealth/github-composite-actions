@@ -34,6 +34,7 @@ jobs:
       id: slack-status
       uses: parsleyhealth/github-composite-actions/slack-job-status@main
       with:
+        status: ${{ job.status }}
         job-description: Staging K8s Deploy of Thing
     - name: Slack notification results
       if: always()
@@ -50,6 +51,7 @@ jobs:
 ## Inputs
 
 - **job-description**: A prefix to display with the job's status in the Slack notification, ex. `Node Deploy` or `K8S Deployment Rollout`
+- **status**: The current status of the job or composite action, defaults to use `job.status`, for composite actions use `github.action_status` instead
 
 ## Outputs
 

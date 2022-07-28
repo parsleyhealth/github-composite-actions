@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2022-7-28
+
+### Updated / Breaking Change
+
+- added `status` input for slack-job-status composite action, needed when using this action inside another composite action
+
 ## [2.1.0] - 2022-7-19
 
 ### Added
