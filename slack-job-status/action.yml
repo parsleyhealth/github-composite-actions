@@ -34,13 +34,13 @@ runs:
       id: slack-status
       shell: bash
       run: |
-        [ "${JOB_STATUS}" = "cancelled" ] && \
+        [ "${job_status}" = "cancelled" ] && \
           echo "::set-output name=color::warning" &&  \
           echo "::set-output name=status::${{ inputs.job-description }} Cancelled"
-        [ "${JOB_STATUS}" = "success" ] && \
+        [ "${job_status}" = "success" ] && \
           echo "::set-output name=color::good" && \
           echo "::set-output name=status::${{ inputs.job-description }} Success"
-        [ "${JOB_STATUS}" = "failure" ] && \
+        [ "${job_status}" = "failure" ] && \
           echo "::set-output name=color::danger" && \
           echo "::set-output name=status::${{ inputs.job-description }} Failed"
         exit 0
