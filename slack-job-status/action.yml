@@ -22,12 +22,12 @@ runs:
   steps:
     - name: Get current status if provided
       shell: bash
-      if: ${{ inputs.status != "" }}
+      if: inputs.status != ''
       run: echo "job_status=${{ inputs.status }}" | tr '[:lower:]' >> $GITHUB_ENV
 
     - name: Get current status if provided
       shell: bash
-      if: ${{ inputs.status == "" }}
+      if: inputs.status == ''
       run: echo "job_status=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Get Job Status Slack Outputs
