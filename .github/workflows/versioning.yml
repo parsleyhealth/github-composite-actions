@@ -2,7 +2,9 @@ name: GitHub Tag Update
 
 on:
   release:
-    types: [published, edited]
+    types:
+      - published
+      - edited
 
 permissions:
   contents: read
