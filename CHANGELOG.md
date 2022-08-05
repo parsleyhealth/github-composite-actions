@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2022-8-5
+
+- added `build-push-action` action to build and push docker image to GCR using workload federation
+
 ## [3.0.0] - 2022-7-28
 
 ### Updated / Breaking Change
