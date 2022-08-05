@@ -35,4 +35,4 @@ jobs:
 - **image-registry-uri**: URI for Google Container Registry to use (uses `gcr.io` by default)
 - **gcp-project-id**: GCP project ID to use for docker image repo
 - **gcp-workload-id-provider** - See <https://github.com/google-github-actions/auth>
-- **gcp-workload-id-service-account-email** - See gcp-workload-id-service-account-email
+- **gcp-workload-id-service-account-email** - See <https://github.com/google-github-actions/auth>
