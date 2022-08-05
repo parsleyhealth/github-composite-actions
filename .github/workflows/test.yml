@@ -1,0 +1,28 @@
+name: "Test Actions"
+
+on:
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-build-push-action:
+    permissions:
+      contents: "read"
+      id-token: "write"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and push test docker image to GCR
+        uses: ./build-push-action
+        with:
+          image-name: composite-test
+          image-tags: "latest,foo"
+          context: ./build-push-action/test
+          gcp-project-id: ${{ secrets.GCP_PROJECT_ID}}
+          gcp-workload-id-provider: ${{ secrets.GCP_WORKLOAD_ID_PROVIDER }}
+          gcp-workload-id-service-account-email: ${{ secrets.GCP_WORKLOAD_ID_SA_EMAIL }}

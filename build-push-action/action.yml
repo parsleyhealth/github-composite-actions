@@ -1,0 +1,68 @@
+name: Build and push docker image to GCR
+description: build and push docker image to google container registry using workload-id
+inputs:
+  context:
+    description: "Context where Dockerfile resides"
+    required: false
+    default: "."
+  image-name:
+    description: "Name for the docker image"
+    required: true
+  image-tags:
+    description: "Tags to apply to built image (csv)"
+    required: true
+  image-build-args:
+    description: "Build arguments for docker image, specified as key value csv (ex. foo=bar,test=something)"
+    required: false
+    default: ""
+  image-registry-uri:
+    description: "Registry host to use (default: us.gcr.io)"
+    required: false
+    default: "gcr.io"
+  gcp-project-id:
+    description: "GCP project ID"
+    required: true
+  gcp-workload-id-provider:
+    description: "GCP workload ID provider name"
+    required: true
+  gcp-workload-id-service-account-email:
+    description: "GCP service account email to assume"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0.8.0
+      with:
+        workload_identity_provider: ${{ inputs.gcp-workload-id-provider }}
+        service_account: ${{ inputs.gcp-workload-id-service-account-email }}
+        token_format: "access_token"
+
+    - name: Login to GCR
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.image-registry-uri }}
+        username: oauth2accesstoken
+        password: ${{ steps.auth.outputs.access_token }}
+
+    # https://trstringer.com/github-actions-multiline-strings/
+    - name: Create docker tags
+      id: image_tags
+      shell: bash
+      run: |
+        DOCKER_TAGS=$(${{ github.action_path }}/split_tags.sh ${{inputs.image-tags}} ${{ inputs.image-name }} ${{ inputs.image-registry-uri }}/${{ inputs.gcp-project-id }})
+        DOCKER_TAGS="${DOCKER_TAGS//'%'/'%25'}"
+        DOCKER_TAGS="${DOCKER_TAGS//$'\n'/'%0A'}"
+        DOCKER_TAGS="${DOCKER_TAGS//$'\r'/'%0D'}"
+        echo "::set-output name=values::$DOCKER_TAGS"
+
+    - name: Build and push docker image to GCR
+      uses: docker/build-push-action@v3
+      with:
+        tags: |
+          ${{ steps.image_tags.outputs.values }}
+        build-args: ${{ inputs.image-build-args }}
+        context: ${{ inputs.context }}
+        push: true

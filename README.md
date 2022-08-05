@@ -7,3 +7,4 @@ Utility composite actions for Parsley Workflows
 - [`service-name-gen`](./service-name-gen/README.md) creates a unique service name and corresponding hostname for an endpoint
 - [`bit-tag-export`](./bit-tag-export/README.md) tags and exports bit components
 - [`bdd-xray-export`](./bdd-xray-export/README.md) runs cucumber BDD tests and exports results to Xray
+- [`build-push-action`](./build-push-action/README.md) builds and pushes docker image to GCR using workload id federation
