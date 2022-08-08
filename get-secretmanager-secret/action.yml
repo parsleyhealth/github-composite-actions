@@ -1,0 +1,34 @@
+name: Get Secret
+description: "get secret from Google Cloud secret manager"
+
+inputs:
+  secret-id:
+    description: "Name/ID of secret in secret manager ex. `<project-id>/<secret-id>`"
+    required: true
+  gcp-workload-id-provider:
+    description: "GCP workload ID provider name"
+    required: true
+  gcp-workload-id-service-account-email:
+    description: "GCP service account email to assume"
+    required: true
+
+outputs:
+  content:
+    description: "the content of the google cloud secret"
+    value: ${{ steps.secrets.outputs.content }}
+
+runs:
+  using: composite
+  steps:
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v0.8.0
+      with:
+        workload_identity_provider: ${{ inputs.gcp-workload-id-provider }}
+        service_account: ${{ inputs.gcp-workload-id-service-account-email }}
+        token_format: access_token
+
+    - id: secrets
+      uses: google-github-actions/get-secretmanager-secrets@v0
+      with:
+        secrets: content:${{ inputs.secret-id }}

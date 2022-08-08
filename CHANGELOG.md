@@ -8,9 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2022-8-8
+
+### Added
+
+- `get-secretmanager-secret` action to get a secret from google cloud secret manager using workload ID
+
 ## [3.1.0] - 2022-8-5
 
-- added `build-push-action` action to build and push docker image to GCR using workload federation
+### Added
+
+- `build-push-action` action to build and push docker image to GCR using workload federation
 
 ## [3.0.0] - 2022-7-28
 
