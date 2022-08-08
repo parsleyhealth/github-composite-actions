@@ -1,4 +1,4 @@
-# tag-draft-release
+# build-push-action
 
 Composite Github Action that builds and pushes docker image to `gcr.io` repo using workload ID for auth.
 
