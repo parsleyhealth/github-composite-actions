@@ -7,19 +7,16 @@ on:
       - edited
 
 permissions:
-  contents: read
+  contents: write # for Actions-R-Us/actions-tagger to create a release and add latest tag
 
 jobs:
   actions-tagger:
-    permissions:
-      contents: write # for Actions-R-Us/actions-tagger to create a release and add latest tag
     runs-on: ubuntu-latest
-    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
 
       - uses: Actions-R-Us/actions-tagger@v2.0.2
         with:
-          publish_latest_tag: true
+          publish_latest_tag: false
         env:
           GITHUB_TOKEN: "${{secrets.PAT}}"
