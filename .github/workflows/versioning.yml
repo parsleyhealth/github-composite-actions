@@ -18,5 +18,4 @@ jobs:
       - uses: Actions-R-Us/actions-tagger@v2.0.2
         with:
           publish_latest_tag: false
-        env:
-          GITHUB_TOKEN: "${{secrets.PAT}}"
+          token: "${{secrets.PAT}}"
