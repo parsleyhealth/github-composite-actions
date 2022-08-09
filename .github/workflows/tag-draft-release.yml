@@ -3,11 +3,11 @@ name: "Tag and Draft Release"
 on:
   push:
     branches:
-      - main 
+      - main
     paths:
-      - 'version.txt'
-      - 'CHANGELOG.md'
-      
+      - "version.txt"
+      - "CHANGELOG.md"
+
 defaults:
   run:
     shell: bash
@@ -16,15 +16,15 @@ jobs:
   create-draft-release:
     runs-on: ubuntu-latest
     steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: '0'
-    
-    - name: Tag and Draft Release
-      uses: parsleyhealth/github-composite-actions/tag-draft-release@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        semver-file: version.txt
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+
+      - name: Tag and Draft Release
+        uses: ../../tag-draft-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          semver-file: version.txt
+          use-v: "true"
