@@ -6,16 +6,17 @@ on:
       - published
       - edited
 
-permissions:
-  contents: write # for Actions-R-Us/actions-tagger to create a release and add latest tag
-
 jobs:
   actions-tagger:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - uses: Actions-R-Us/actions-tagger@v2.0.2
+      - id: tag
+        run: |
+          echo "::set-output name=version::$(cat version.txt | awk -F '=' '{ print $2 }')"
+
+      - uses: fischerscode/tagger@v0.1
         with:
-          publish_latest_tag: false
-          token: "${{secrets.PAT}}"
+          prefix: v
+          tag: ${{ steps.tag.outputs.version }}
