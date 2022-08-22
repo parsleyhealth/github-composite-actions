@@ -23,6 +23,10 @@ runs:
       with:
         fetch-depth: 0
 
+    - shell: bash
+      run: |
+        echo "GOPRIVATE=github.com/parsleyhealth" >> $GITHUB_ENV
+
     - uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.go-version }}
@@ -30,7 +34,7 @@ runs:
     - name: Configure git for private modules
       shell: bash
       run: |
-        RUN git config 
+        RUN git config \
         --global url."https://git:${{ inputs.pat }}@github.com".insteadOf "https://github.com"
 
     - name: Lint
@@ -42,14 +46,11 @@ runs:
         args: --issues-exit-code=0
 
     - name: Test
-      env:
-        GOPRIVATE: github.com/parsleyhealth
       shell: bash
       run: go test ./... -coverprofile=coverage.out
 
     - name: SonarCloud scan
       uses: SonarSource/sonarcloud-github-action@master
       env:
-        GOPRIVATE: github.com/parsleyhealth
         GITHUB_TOKEN: ${{ inputs.pat }}
         SONAR_TOKEN: ${{ inputs.sonar-token }}
