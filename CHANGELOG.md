@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v3.3.0] - 2022-8-22
+
+### Added
+
+- `go-ci` action for common Go CI
+  
 ## [v3.2.4] - 2022-8-9
 
 ### Fixed

@@ -1,0 +1,55 @@
+name: Go CI
+description: general CI steps for go-based services
+inputs:
+  go-version:
+    description: "Version of Go to use (default: `1.18`)"
+    required: false
+    default: "1.18"
+  pat:
+    description: "Personal Access Token to use for private github go modules"
+    required: true
+  sonar-token:
+    description: "API token for sonarqube"
+    required: true
+  run-lint:
+    description: "Should the action lint the code (default: `true`)"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Configure git for private modules
+      shell: bash
+      run: |
+        RUN git config 
+        --global url."https://git:${{ inputs.pat }}@github.com".insteadOf "https://github.com"
+
+    - name: Lint
+      uses: golangci/golangci-lint-action@v3
+      if: inputs.run-lint == "true"
+      with:
+        version: latest
+        only-new-issues: true
+        args: --issues-exit-code=0
+
+    - name: Test
+      env:
+        GOPRIVATE: github.com/parsleyhealth
+      shell: bash
+      run: go test ./... -coverprofile=coverage.out
+
+    - name: SonarCloud scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GOPRIVATE: github.com/parsleyhealth
+        GITHUB_TOKEN: ${{ inputs.pat }}
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
