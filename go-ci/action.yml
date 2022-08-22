@@ -34,7 +34,7 @@ runs:
     - name: Configure git for private modules
       shell: bash
       run: |
-        RUN git config \
+        git config \
         --global url."https://git:${{ inputs.pat }}@github.com".insteadOf "https://github.com"
 
     - name: Lint
