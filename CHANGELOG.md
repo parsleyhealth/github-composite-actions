@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v3.3.1] - 2022-8-23
+
+### Fixed
+
+- quote issue in go-ci action
+
 ## [v3.3.0] - 2022-8-22
 
 ### Added
