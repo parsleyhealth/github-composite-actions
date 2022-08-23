@@ -15,6 +15,10 @@ inputs:
     description: "Should the action lint the code (default: `true`)"
     required: false
     default: "true"
+  run-gosec:
+    description: "Should the action run the gosec action (default: `false`)"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -48,6 +52,12 @@ runs:
     - name: Test
       shell: bash
       run: go test ./... -coverprofile=coverage.out
+
+    - name: Gosec
+      uses: securego/gosec@master
+      if: inputs.run-gosec == 'true'
+      with:
+        args: -no-fail -fmt=sonarqube -out security-report.json ./...
 
     - name: SonarCloud scan
       uses: SonarSource/sonarcloud-github-action@master

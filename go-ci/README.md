@@ -29,6 +29,7 @@ jobs:
         pat: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         sonar-token: ${{ secrets.SONAR_TOKEN }}
         run-lint: "true"
+        run-gosec: "true"
 
 ```
 
@@ -38,3 +39,4 @@ jobs:
 - **pat**: Personal Access Token for use with private packages
 - **sonar-token**: API token to use with SonarCloud
 - **run-lint**: Should the action run lint on the code (default: `true`)
+- **run-gosec**: Should the action run the gosec on the code (default: `false`)
