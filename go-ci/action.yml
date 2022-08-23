@@ -39,7 +39,7 @@ runs:
 
     - name: Lint
       uses: golangci/golangci-lint-action@v3
-      if: inputs.run-lint == "true"
+      if: inputs.run-lint == 'true'
       with:
         version: latest
         only-new-issues: true
