@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.0] - 2022-9-8
+
+### Added
+
+- added new required options for sonarqube scanner `sonar-org` and `sonar-project-key` in go-ci action
+
 ## [v3.4.0] - 2022-8-23
 
 ### Added

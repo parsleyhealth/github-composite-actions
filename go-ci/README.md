@@ -28,6 +28,8 @@ jobs:
         go-version: ${{ matrix.go-version }}
         pat: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         sonar-token: ${{ secrets.SONAR_TOKEN }}
+        sonar-org: my-org
+        sonar-project-key: super-awesome-service
         run-lint: "true"
         run-gosec: "true"
 
@@ -36,7 +38,9 @@ jobs:
 ## Inputs
 
 - **go-version**: version of go to use with tests and CI (default: `1.18.x`)
-- **pat**: Personal Access Token for use with private packages
-- **sonar-token**: API token to use with SonarCloud
+- **pat**: Personal Access Token for use with private packages (required)
+- **sonar-token**: API token to use with SonarCloud (required)
+- **sonar-org**: Org to associate with scan (default: `parsleyhealth`)
+- **sonar-project-key**: Project key to identify source in sonar dash (required)
 - **run-lint**: Should the action run lint on the code (default: `true`)
 - **run-gosec**: Should the action run the gosec on the code (default: `false`)

@@ -8,6 +8,13 @@ inputs:
   pat:
     description: "Personal Access Token to use for private github go modules"
     required: true
+  sonar-project-key:
+    description: "SonarQube project key (ex. `parsleyhealth_my-service`)"
+    required: true
+  sonar-org:
+    description: "Org to use for SonarQube reporting"
+    required: false
+    default: "parsleyhealth"
   sonar-token:
     description: "API token for sonarqube"
     required: true
@@ -61,6 +68,10 @@ runs:
 
     - name: SonarCloud scan
       uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.organization=${{ inputs.sonar-org }}
+          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
       env:
         GITHUB_TOKEN: ${{ inputs.pat }}
         SONAR_TOKEN: ${{ inputs.sonar-token }}
