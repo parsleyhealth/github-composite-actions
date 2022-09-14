@@ -47,6 +47,16 @@ runs:
       run: |
         git config \
         --global url."https://git:${{ inputs.pat }}@github.com".insteadOf "https://github.com"
+    
+    - name: Golang Modules cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-golang-
 
     - name: Lint
       uses: golangci/golangci-lint-action@v3
