@@ -54,9 +54,9 @@ runs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        key: ${{ runner.os }}-go-${{ inputs.go-version }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-golang-
+          ${{ runner.os }}-golang-${{ inputs.go-version }}-
 
     - name: Lint
       uses: golangci/golangci-lint-action@v3
