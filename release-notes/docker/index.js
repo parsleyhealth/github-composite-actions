@@ -41,14 +41,7 @@ const options = {
         },
       },
     },
-    children: [
-      {
-        type: "paragraph",
-        paragraph: {
-          rich_text: [{ type: "text", text: { content: RELEASE_NOTES } }],
-        },
-      },
-    ],
+    children: generateChildren(RELEASE_NOTES),
   }),
 };
 
@@ -56,3 +49,62 @@ fetch(NOTION_API_HOST + NOTION_PAGE_API, options)
   .then((response) => response.json())
   .then((response) => console.log(`Page Created: ${response.url}`))
   .catch((err) => console.error(err));
+
+function generateChildren(input) {
+  const h1 = /^# (.*$)/gim;
+  const h2 = /^## (.*$)/gim;
+  const h3 = /^### (.*$)/gim;
+  const ul = /^- (.*$)/gim;
+  const ol = /^\d+. (.*$)/gim;
+  const bq = /^\> (.*$)/gim;
+
+  const content = input + "\n\n";
+  var blocks = [];
+  var codeBuffer = [];
+
+  content.split("\n").forEach((line) => {
+    if (line == "") {
+      console.log(codeBuffer);
+      if (codeBuffer.length > 0) {
+        blocks.push(generateBlock(codeBuffer.join("\n"), "code"));
+      }
+      codeBuffer = [];
+    } else if (line.match(h1)?.length > 0) {
+      blocks.push(generateBlock(line.replace(h1, "$1"), "heading_1"));
+    } else if (line.match(h2)?.length > 0) {
+      blocks.push(generateBlock(line.replace(g2, "$1"), "heading_2"));
+    } else if (line.match(h3)?.length > 0) {
+      blocks.push(generateBlock(line.replace(h3, "$1"), "heading_3"));
+    } else if (line.match(ol)?.length > 0) {
+      blocks.push(generateBlock(line.replace(ol, "$1"), "numbered_list_item"));
+    } else if (line.match(ul)?.length > 0) {
+      blocks.push(generateBlock(line.replace(ul, "$1"), "bulleted_list_item"));
+    } else if (line.match(bq)?.length > 0) {
+      codeBuffer.push(line.replace(bq, "$1"));
+    } else {
+      blocks.push(generateBlock(line, "paragraph"));
+    }
+  });
+
+  return blocks;
+}
+
+function generateBlock(input, type) {
+  var block = {
+    type: type,
+  };
+
+  block[type] = {
+    rich_text: [
+      {
+        type: "text",
+        text: {
+          content: input,
+          link: null,
+        },
+      },
+    ],
+  };
+
+  return block;
+}
