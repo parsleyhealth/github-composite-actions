@@ -10,3 +10,4 @@ Utility composite actions for Parsley Workflows
 - [`build-push-action`](./build-push-action/README.md) builds and pushes docker image to GCR using workload id federation
 - [`get-secretmanager-secret`](./get-secretmanager-secret/README.md) get secret from google cloud secret manager using workload id federation
 - [`go-ci`](./go-ci/README.md) common CI patterns for running test, lint and sonar scans on go services
+- [`release-notes`](./release-notes/README.md) push release notes from our core products to a Notion database
