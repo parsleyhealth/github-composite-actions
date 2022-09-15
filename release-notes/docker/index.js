@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 
 dotenv.config();
 
-const date = new Date();
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 const PRODUCT = process.env.PRODUCT;
