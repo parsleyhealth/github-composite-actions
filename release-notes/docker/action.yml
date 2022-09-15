@@ -29,5 +29,5 @@ runs:
     - ${{ inputs.notion-token }}
     - ${{ inputs.notion-database-id }}
     - ${{ inputs.product }}
-    - ${{ inputs.notion-release-tag }}
-    - ${{ inputs.notion-release-notes }}
+    - ${{ inputs.release-tag }}
+    - ${{ inputs.release-notes }}
