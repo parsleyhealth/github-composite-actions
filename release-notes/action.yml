@@ -1,0 +1,32 @@
+name: "Release Notes"
+description: "Captures release notes from a release and pushes them to a database in Notion"
+
+inputs:
+  notion-token:
+    description: "Token for Notion API"
+    required: true
+  notion-database-id:
+    description: "Database ID to add pages to"
+    required: true
+  product:
+    description: "The product name"
+    required: true
+  release-tag:
+    description: "The release tag"
+    required: true
+  release-notes:
+    description: "The release notes from the release body"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Build image
+      id: tagexport
+      uses: parsleyhealth/github-composite-actions/release-notes/docker@main
+      with:
+        notion-token: ${{ inputs.notion-token }}
+        notion-database-id: ${{ inputs.notion-database-id }}
+        product: ${{ inputs.product }}
+        release-tag: ${{ inputs.release-tag }}
+        release-notes: ${{ inputs.release-notes }}

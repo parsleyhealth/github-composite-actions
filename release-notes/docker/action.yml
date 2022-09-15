@@ -1,0 +1,33 @@
+name: "Release Notes Container"
+description: "Captures release notes from a release and pushes them to a database in Notion"
+
+inputs:
+  notion-token:
+    description: "Token for Notion API"
+    required: true
+  notion-database-id:
+    description: "Database ID to add pages to"
+    required: true
+  product:
+    description: "The product name"
+    required: true
+  release-tag:
+    description: "The release tag"
+    required: true
+  release-notes:
+    description: "The release notes from the release body"
+    required: true
+
+outputs:
+  status:
+    description: "Status of the request"
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.notion-token }}
+    - ${{ inputs.notion-database-id }}
+    - ${{ inputs.product }}
+    - ${{ inputs.notion-release-tag }}
+    - ${{ inputs.notion-release-notes }}
