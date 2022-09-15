@@ -4,6 +4,9 @@ import fetch from "node-fetch";
 
 dotenv.config();
 
+const NOTION_API_HOST = "https://api.notion.com";
+const NOTION_PAGE_API = "/v1/pages";
+const NOTION_API_VERSION = "2022-06-28";
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 const PRODUCT = process.env.PRODUCT;
@@ -15,7 +18,7 @@ const options = {
   headers: {
     accept: "application/json",
     "Content-Type": "application/json",
-    "Notion-Version": "2022-06-28",
+    "Notion-Version": NOTION_API_VERSION,
     authorization: `Bearer ${NOTION_TOKEN}`,
   },
   body: JSON.stringify({
@@ -48,7 +51,7 @@ const options = {
   }),
 };
 
-fetch("https://api.notion.com/v1/pages", options)
+fetch(NOTION_API_HOST + NOTION_PAGE_API, options)
   .then((response) => response.json())
   .then((response) => console.log(`Page Created: ${response.url}`))
   .catch((err) => console.error(err));
