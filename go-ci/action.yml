@@ -26,6 +26,10 @@ inputs:
     description: "Should the action run the gosec action (default: `false`)"
     required: false
     default: "false"
+  lint-timeout:
+    description: "Set timeout for lint the code (default: 3m0s)"
+    required: false
+    default: "3m0s"
 
 runs:
   using: "composite"
@@ -54,7 +58,7 @@ runs:
       with:
         version: latest
         only-new-issues: true
-        args: --issues-exit-code=0
+        args: --issues-exit-code=0 --timeout=${{ inputs.lint-timeout }}
 
     - name: Test
       shell: bash

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.1.3] - 2022-9-21
+
+### Updated
+
+- added new option for golangci-lint `lint-timeout` in go-ci action
+
 ## [v4.1.2] - 2022-9-15
 
 ### Updated
