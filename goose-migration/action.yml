@@ -1,0 +1,31 @@
+name: "Goose Migration"
+description: "Run goose database migration using cloud sql proxy"
+
+inputs:
+  gcloud-credentials-json:
+    description: "Service account credentials JSON"
+    required: true
+  cloud-sql-instance:
+    description: "Cloud SQL instance connection string (ex. `parsley-development-1:us-east1:sample-database=tcp:5432`)"
+    required: true
+  goose-command:
+    description: "Command to issue to goose"
+    required: true
+  migrations-dir:
+    description: "Location of migration files relative from repository root"
+    required: false
+    default: ""
+  retries:
+    description: "Amount of times to retry goose command on failure"
+    required: false
+    default: "5"
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.gcloud-credentials-json }}
+    - ${{ inputs.cloud-sql-instance }}
+    - ${{ inputs.migrations-dir }}
+    - ${{ inputs.goose-command }}
+    - ${{ inputs.retries }}

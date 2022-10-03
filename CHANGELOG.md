@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.2.0] - 2022-10-3
+
+### Added
+
+- Added `goose-migration` action for goose migrations to deprecate old repo/code
+
 ## [v4.1.3] - 2022-9-21
 
 ### Updated
