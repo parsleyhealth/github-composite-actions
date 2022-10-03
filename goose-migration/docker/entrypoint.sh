@@ -7,11 +7,12 @@ if [ -z $GITHUB_WORKSPACE ]; then
     echo "$$GITHUB_WORKSPACE has not been set"
 fi
 
-gcp_creds_json=${1:?"gcp-credentials-json is not set"}
-cloud_sql_instance=${2:?"cloud-sql-instance is not set"}
-migrations_dir=${3:-"."}
-goose_command=${4:-"-version"}
-conn_retries=${5:-5}
+goose_version=${1:-"latest"}
+gcp_creds_json=${2:?"gcp-credentials-json is not set"}
+cloud_sql_instance=${3:?"cloud-sql-instance is not set"}
+migrations_dir=${4:-"."}
+goose_command=${5:-"-version"}
+conn_retries=${6:-5}
 
 res=1
 csp_pid=
@@ -19,8 +20,9 @@ creds_files=/tmp/creds.json
 
 run_w_retry() {
     local subcmd=${1:?"no command sent to run_w_retry"}
-    local retries=${2:-10}
-    local cmd="goose ${subcmd}"
+    local migrations_dir=${2:?"no migrations_dir setn to run_w_retry"}
+    local retries=${3:-10}
+    local cmd="goose -dir ${migrations_dir} ${subcmd}"
     local current_try=1
     local success=1
 
@@ -41,6 +43,13 @@ run_w_retry() {
     return ${success}
 }
 
+#install goose
+go install github.com/pressly/goose/v3/cmd/goose@${goose_version}
+if [ $? -gt 0 ]; then 
+    echo "could not install goose@${goose_version}, exiting"
+    exit 1
+fi
+
 # Save credentials to disk
 echo $gcp_creds_json >${creds_files}
 
@@ -51,7 +60,7 @@ echo $gcp_creds_json >${creds_files}
 echo $! >${csp_pid}
 
 # Run goose command with retry and capture result
-run_w_retry "-dir $GITHUB_WORKSPACE/${migrations_dir} ${goose_command}" ${conn_retries}
+run_w_retry ${goose_command} $GITHUB_WORKSPACE/${migrations_dir} ${conn_retries}
 res=$?
 
 # shut down cloudsql pid
