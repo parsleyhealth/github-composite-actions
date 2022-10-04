@@ -1,6 +1,6 @@
 # Github Composite Actions
 
-Utility composite actions for Parsley Workflows
+Utility composite and docker actions for Parsley Workflows
 
 - [`tag-draft-release`](./tag-draft-release/README.md) creates a new tag based on a semver or properties file and then creates a draft release including content from `CHANGELOG.md`
 - [`slack-job-status`](./slack-job-status/README.md) creates outputs based on the job status usable with [voxmedia/github-action-slack-notify-build](https://github.com/voxmedia/github-action-slack-notify-build)
@@ -11,3 +11,12 @@ Utility composite actions for Parsley Workflows
 - [`get-secretmanager-secret`](./get-secretmanager-secret/README.md) get secret from google cloud secret manager using workload id federation
 - [`go-ci`](./go-ci/README.md) common CI patterns for running test, lint and sonar scans on go services
 - [`release-notes`](./release-notes/README.md) push release notes from our core products to a Notion database
+- [`goose-migration`](./goose-migration/README.md) run goose migrations against cloud sql instances
+
+## Contributing
+
+- make sure to add documentation to a `README.md` in a well-named subfolder
+- if possible: dogfood your new action and add a test in this repo
+- bump `version.txt` according to semver
+- add to `CHANGELOG.md` a description of changes made to project
+- create PR and ping reviewers
