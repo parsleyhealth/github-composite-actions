@@ -25,7 +25,7 @@ run_w_retry() {
     local success=1
     current_try=1
 
-    until [ ${current_try} -eq ${ret} ] || [ ${success} -eq 0 ]; do
+    until [ ${current_try} -gt ${ret} ] || [ ${success} -eq 0 ]; do
         echo "trying (${current_try}/${ret})"
         goose ${GOOSE_COMMAND}
         success=$?
