@@ -20,3 +20,4 @@ Utility composite and docker actions for Parsley Workflows
 - bump `version.txt` according to semver
 - add to `CHANGELOG.md` a description of changes made to project
 - create PR and ping reviewers
+- after merging PR, a draft release will be created, make sure to publish the release and the latest major version take will be bumped

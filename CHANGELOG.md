@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.2.1] - 2022-10-5
+
+### Fixed
+
+- fixed various issues with `goose-migrations`
+
 ## [v4.2.0] - 2022-10-3
 
 ### Added
