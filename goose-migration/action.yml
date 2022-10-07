@@ -2,14 +2,11 @@ name: "Goose Migration"
 description: "Run goose database migration using cloud sql proxy"
 
 inputs:
-  gcloud-credentials-json:
-    description: "Service account credentials JSON"
-    required: true
-  cloud-sql-instance:
-    description: "Cloud SQL instance connection string (ex. `parsley-development-1:us-east1:sample-database=tcp:5432`)"
-    required: true
   goose-command:
     description: "Command to issue to goose"
+    required: true
+  cloud-sql-instance:
+    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5432`"
     required: true
   migrations-dir:
     description: "Location of migration files relative from repository root"
@@ -27,10 +24,9 @@ inputs:
 runs:
   using: docker
   image: Dockerfile
+  env:
+    GOOSE_COMMAND: -dir $GITHUB_WORKSPACE${{ inputs.migrations-dir }} ${{ inputs.goose-command }}
   args:
     - ${{ inputs.goose-version }}
-    - ${{ inputs.gcloud-credentials-json }}
     - ${{ inputs.cloud-sql-instance }}
-    - ${{ inputs.migrations-dir }}
-    - ${{ inputs.goose-command }}
     - ${{ inputs.retries }}
