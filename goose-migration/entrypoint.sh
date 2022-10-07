@@ -27,7 +27,7 @@ run_w_retry() {
 
     until [ ${current_try} -gt ${ret} ] || [ ${success} -eq 0 ]; do
         echo "trying (${current_try}/${ret})"
-        goose ${GOOSE_COMMAND}
+        eval "goose ${GOOSE_COMMAND}"
         success=$?
         if [ ${success} -eq 0 ]; then
             break
