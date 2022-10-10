@@ -25,7 +25,6 @@ jobs:
       with:
         migrations-dir: "/migrations/sql"
         cloud-sql-instance: "parsley-development-1:us-east1:sample-database=tcp:5432"
-        migrations-dir: "migrations/v1"
         goose-version: "latest"
         goose-command: >
             postgres 
