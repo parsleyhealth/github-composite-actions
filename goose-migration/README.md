@@ -21,7 +21,7 @@ jobs:
         create_credentials_file: "true"
 
     - name: Run goose migration against cloudsql
-      uses: parsleyhealth/github-composite-actions/goose-migrations@v4
+      uses: parsleyhealth/github-composite-actions/goose-migration@v4
       with:
         migrations-dir: "/migrations/sql"
         cloud-sql-instance: "parsley-development-1:us-east1:sample-database=tcp:5432"
