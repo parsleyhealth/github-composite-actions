@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.2.2] - 2022-11-07
+### Added
+
+- New optional for test command to execute with custom test command for `go-ci`
+
 ## [v4.2.1] - 2022-10-5
 
 ### Fixed

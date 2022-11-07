@@ -21,9 +21,9 @@ jobs:
         platform: [ubuntu-20.04]
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run lint, test, coverage
-      uses: parsleyhealth/composite-actions/go-ci@v3
+      uses: parsleyhealth/composite-actions/go-ci@v4
       with:
         go-version: ${{ matrix.go-version }}
         pat: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -32,6 +32,7 @@ jobs:
         sonar-project-key: super-awesome-service
         run-lint: "true"
         run-gosec: "true"
+        test-cmd: "go test ./... -coverprofile=coverage.out"
 
 ```
 
@@ -44,3 +45,4 @@ jobs:
 - **sonar-project-key**: Project key to identify source in sonar dash (required)
 - **run-lint**: Should the action run lint on the code (default: `true`)
 - **run-gosec**: Should the action run the gosec on the code (default: `false`)
+- **test-cmd**: Should override the test command (default :`go test ./... -coverprofile=coverage.out`)
