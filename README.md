@@ -12,6 +12,7 @@ Utility composite and docker actions for Parsley Workflows
 - [`go-ci`](./go-ci/README.md) common CI patterns for running test, lint and sonar scans on go services
 - [`release-notes`](./release-notes/README.md) push release notes from our core products to a Notion database
 - [`goose-migration`](./goose-migration/README.md) run goose migrations against cloud sql instances
+- [`setup-node`](./setup-node/README.md) replacement for `actions/setup-node`
 
 ## Contributing
 
