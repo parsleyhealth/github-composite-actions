@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "build-push-action/*"
+      - "setup-node/*"
 
 defaults:
   run:
