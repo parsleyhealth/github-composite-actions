@@ -30,6 +30,12 @@ inputs:
     description: "Set timeout for lint the code (default: 3m0s)"
     required: false
     default: "3m0s"
+  test-cmd:
+    description: "Test command to execute test"
+    required: false
+    default: "go test ./... -coverprofile=coverage.out"
+
+  
 
 runs:
   using: "composite"
@@ -62,7 +68,7 @@ runs:
 
     - name: Test
       shell: bash
-      run: go test ./... -coverprofile=coverage.out
+      run: ${{ inputs.test-cmd }}
 
     - name: Gosec
       uses: securego/gosec@master
