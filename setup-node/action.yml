@@ -28,6 +28,10 @@ runs:
         if [ ! -z "${{ inputs.bit-token }}" ]; then 
           echo "BIT_TOKEN=${{ inputs.bit-token }}" >> $GITHUB_ENV 
         fi
+
+    - name: check for env vars
+      shell: bash
+      run: |
         if [ -z $NPM_TOKEN ] || [ -z $BIT_TOKEN ]; then 
           echo "Couldn't find NPM_TOKEN or BIT_TOKEN environment variables, exiting."
           exit 1
