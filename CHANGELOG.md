@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.4.0] - 2022-11-09
+
+### Added
+
+- `setup-nodejs` composite action to reduce confusion and DRY in repos that need bit.dev/etc.
+
 ## [v4.3.0] - 2022-11-07
+
 ### Added
 
 - New optional for test command to execute with custom test command for `go-ci`

@@ -1,0 +1,46 @@
+name: "Setup Node.js"
+description: "setup local npmrc for yarn and npm installs of private packages and bit.dev components"
+inputs:
+  node-version:
+    description: "Node version to use (default: `lts/gallium`)"
+    required: false
+    default: "lts/gallium"
+  npm-token:
+    description: "Token to access private npm repo, uses environment var `NPM_TOKEN` if not passed in explicitly"
+    required: false
+    default: ""
+  bit-token:
+    description: "Token to access private npm repo, uses environment var `BIT_TOKEN` if not passed in explicitly"
+    required: false
+    default: ""
+
+outputs: {}
+
+runs:
+  using: composite
+  steps:
+    - name: if tokens provided, override env vars
+      shell: bash
+      run: |
+        if [ ! -z "${{ inputs.npm-token }}" ]; then 
+          echo "NPM_TOKEN=${{ inputs.npm-token }}" >> $GITHUB_ENV 
+        fi
+        if [ ! -z "${{ inputs.bit-token }}" ]; then 
+          echo "BIT_TOKEN=${{ inputs.bit-token }}" >> $GITHUB_ENV 
+        fi
+        if [ -z $NPM_TOKEN ] || [ -z $BIT_TOKEN ]; then 
+          echo "Couldn't find NPM_TOKEN or BIT_TOKEN environment variables, exiting."
+          exit 1
+        fi
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: "https://npm.pkg.github.com"
+
+    - name: setup .npmrc for bit.dev
+      shell: bash
+      run: |
+        npm config set @ph-bit:registry=https://node.bit.cloud
+        npm config set //node.bit.cloud/:_authToken ${BIT_TOKEN}
+        npm config set //npm.pkg.github.com/:_authToken ${NPM_TOKEN}
