@@ -11,7 +11,7 @@ defaults:
     shell: bash
 
 jobs:
-  test-build-push-action:
+  test-actions:
     permissions:
       contents: "read"
       id-token: "write"
@@ -30,15 +30,15 @@ jobs:
           gcp-workload-id-provider: ${{ secrets.GCP_WORKLOAD_ID_PROVIDER }}
           gcp-workload-id-service-account-email: ${{ secrets.GCP_WORKLOAD_ID_SA_EMAIL }}
 
+      - name: Setup Node.js bad test (no tokens provided)
+        continue-on-error: true
+        uses: ./setup-node
+        with:
+          node-version: "lts/hydrogen"
+
       - name: Setup Node.js good test
         uses: ./setup-node
         with:
           node-version: "lts/hydrogen"
           npm-token: "fakefakefake"
           bit-token: "fakefakefake"
-
-      - name: Setup Node.js bad test (no tokens provided)
-        continue-on-error: true
-        uses: ./setup-node
-        with:
-          node-version: "lts/hydrogen"
