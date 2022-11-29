@@ -9,6 +9,9 @@ bit config set anonymous_reporting false
 bit config set user.token ${BIT_TOKEN}
 bit install
 
-echo "BIT_CHANGES=$(bit tag --persist | grep '     > ' | sed 's/     > />/g' | tr '\n' ',' | sed 's/,/\\\\n/g')" >>$GITHUB_ENV
+BIT_CHANGES_RAW_OUTPUT=$(bit tag --persist)
+
+echo "BIT_CHANGES_RAW_OUTPUT=${BIT_CHANGES_RAW_OUTPUT}" >>$GITHUB_ENV
+echo "BIT_CHANGES=$(echo ${BIT_CHANGES_RAW_OUTPUT} | grep '     > ' | sed 's/     > />/g' | tr '\n' ',' | sed 's/,/\\n/g')" >>$GITHUB_ENV
 
 bit export
