@@ -2,6 +2,9 @@ name: "Tag and Export Bit Component"
 description: "Tags and exports bit component"
 
 inputs:
+  parsley-bot-token:
+    description: "PAT for parsleybot to commit back changes to `master` and bypass branch protection"
+    required: true
   bit-token:
     description: "Bit token to use for interaction with bit service"
     required: true
@@ -19,8 +22,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.parsley-bot-token }}
+
     - name: Run bit export
-      id: tagexport
       uses: parsleyhealth/github-composite-actions/bit-tag-export/docker@main
       with:
         docker-image-tag: ${{ inputs.docker-image-tag }}
@@ -30,8 +36,8 @@ runs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "update .bitmap with new component versions (automated). --skip-ci"
-        commit_user_name: "${{ github.actor }}"
-        commit_user_email: "${{ github.actor }}@users.noreply.github.com"
+        commit_user_name: "parsleybot"
+        commit_user_email: "parsleybot@parsleyhealth.com"
 
     - name: Send Slack notification
       uses: wearerequired/slack-messaging-action@v1
@@ -42,5 +48,5 @@ runs:
           {
               "icon_emoji": ":rocket:",
               "username": "PH-Bit Bot",
-              "text": "*Bit Component Updates*\n\n${{ steps.tagexport.outputs.changes }}"
+              "text": "*Bit Component Updates*\n\n${{ env.BIT_CHANGES }}"
           }

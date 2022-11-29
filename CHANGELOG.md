@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.0.0] - 2022-11-29
+
+### Updated
+
+- `bit-tag-export` action now requires `parsley-bot-token` input in order to assume id to bypass branch protection on bit repos
+
 ## [v4.4.0] - 2022-11-09
 
 ### Added

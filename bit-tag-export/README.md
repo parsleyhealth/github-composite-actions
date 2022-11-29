@@ -19,14 +19,16 @@ jobs:
     if: "!contains(github.event.head_commit.message, '--skip-ci')"
     env:
       SLACK_CHANNEL_ID: ASDFASDF
+      BOT_PAT: ${{ secrets.PAT }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
             ref: ${{ github.head_ref }}
 
-      - uses: parsleyhealth/github-composite-actions/bit-tag-export@main
+      - uses: parsleyhealth/github-composite-actions/bit-tag-export@v5
         with:
+            parsley-bot-token: ${{ env.BOT_PAT }}
             bit-token: ${{ secrets.BIT_TOKEN }}
             slack-channel-id: ${{ env.SLACK_CHANNEL_ID }}
             slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
