@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.0.2] - 2022-11-30
+
+### Fixed
+
+- `bit-tag-export` action now saves raw output from `bit tag` to a local file for transformation
+
 ## [v5.0.1] - 2022-11-29
 
 ### Fixed

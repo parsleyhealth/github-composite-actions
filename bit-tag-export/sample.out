@@ -1,0 +1,214 @@
+- loading aspects...
+- running command "tag"...
+- determine components to tag...
+- teambit.workspace/workspace, loading components (total: 1)
+- teambit.workspace/workspace, loading components (1/1). ph-bit.utils/envs/tailwind-react@0.2.5
+- teambit.workspace/workspace, loading components (completed in 9ms)
+- teambit.workspace/workspace, loading components (total: 1)
+- teambit.workspace/workspace, loading components (1/1). ph-bit.utils/envs/tailwind-react@0.2.5
+- teambit.workspace/workspace, loading components (completed in 508μs)
+- teambit.workspace/workspace, loading components (total: 1)
+- teambit.workspace/workspace, loading components (1/1). ph-bit.utils/envs/tailwind-react@0.2.5
+- teambit.workspace/workspace, loading components (completed in 529μs)
+- Downloaded 100 objects, 3 components. Processed successfully 99 objects, 3 components
+- Downloaded 100 objects, 3 components. Processed successfully 100 objects, 3 components
+- all objects were processed and written to the filesystem successfully
+- importing missing dependencies...
+- deduping dependencies for installation
+✔ deduping dependencies for installation
+- running pre install subscribers
+✔ running pre install subscribers
+- installing dependencies using pnpm
+...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 1, reused 0, downloaded 0, added 0
+[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 13, reused 8, downloaded 0, added 0
+[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 13, reused 13, downloaded 0, added 0
+[63C[1A6, reused 16[75D[1B[63C[1A7, reused 17[75D[1B[63C[1A8[64D[1B[63C[1A9, reused 18[75D[1B[62C[1A35, reused 33[75D[1B[62C[1A44, reused 44[75D[1B[62C[1A60, reused 60[75D[1B[62C[1A74, reused 74[75D[1B[62C[1A95, reused 93[75D[1B[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 120, reused 119, downloaded 0, added 0
+[63C[1A32, reused 132[77D[1B[63C[1A56, reused 156[77D[1B[63C[1A85, reused 185[77D[1B[64C[1A7, reused 187[77D[1B[1A...90b7c15539fe327a0af6a743df099e1a93154 | +189 +++++++++++++++++++[0K
+...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 187, reused 187, downloaded 0, added 0
+[64C[1A9, reused 189[77D[1B[1APackages are hard linked from the content-addressable store to the virtual store.[0K
+  Content-addressable store is at: /Users/mst/.pnpm-store/v3
+  Virtual store is at:             ../../../Library/Caches/Bit/capsules/1df90b7c15539fe327a0af6a743df099e1a93154/node_modules/.pnpm
+...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 189, reused 189, downloaded 0, added 0
+[99C[1A4[100D[1B[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 189, reused 189, downloaded 0, added 31
+[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 189, reused 189, downloaded 0, added 135
+[100C[1A78[102D[1B[101C[1A9[102D[1B[100C[1A86[102D[1B[101C[1A7[102D[1B[1A...90b7c15539fe327a0af6a743df099e1a93154 | Progress: resolved 189, reused 189, downloaded 0, added 189, done
+  -------------------------
+✔ installing dependencies using pnpm
+- running post install subscribers
+✔ running post install subscribers
+- linking components
+✔ linking components
+- teambit.workspace/workspace, loading components 
+- teambit.workspace/workspace, loading components (completed in 179μs)
+- teambit.workspace/workspace, loading components (total: 1)
+- teambit.workspace/workspace, loading components (1/1). ph-bit.utils/envs/tailwind-react@0.2.5
+- teambit.workspace/workspace, loading components (completed in 286μs)
+- teambit.pipelines/builder, running build pipe for 1 environments, total 7 tasks 
+  running build pipe for 1 environments, total 7 tasks
+  generated graph for env "ph-bit.utils/envs/tailwind-react@0.2.5", originalSeedersOfThisEnv: 54, graphOfThisEnv: 54, graph total: 54
+- executing pre-build for all tasks
+✔ executing pre-build for all tasks
+- teambit.pipelines/builder, running tasks (total: 7)
+- teambit.pipelines/builder, running tasks (1/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/aspect:CoreExporter (export all core aspects via the main aspects)"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/aspect:CoreExporter (export all core aspects via the main aspects)" has completed successfully in 1ms
+- teambit.pipelines/builder, running tasks (2/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.compilation/compiler:TSCompiler (compile components for artifact dist)"
+- teambit.typescript/typescript, compile typescript components (total: 54)
+- teambit.typescript/typescript, compile typescript components (1/54). ph-bit.design/ui/alerts/badge@0.2.9
+- teambit.typescript/typescript, compile typescript components (2/54). ph-bit.design/ui/typography/eyebrow@0.2.8
+- teambit.typescript/typescript, compile typescript components (3/54). ph-bit.design/ui/alerts/toast@0.0.4
+- teambit.typescript/typescript, compile typescript components (4/54). ph-bit.design/ui/icons/alert@0.0.4
+- teambit.typescript/typescript, compile typescript components (5/54). ph-bit.design/ui/icons/cancel@0.2.8
+- teambit.typescript/typescript, compile typescript components (6/54). ph-bit.design/ui/icons/info@0.0.6
+- teambit.typescript/typescript, compile typescript components (7/54). ph-bit.design/ui/icons/success@0.0.4
+- teambit.typescript/typescript, compile typescript components (8/54). ph-bit.design/ui/typography/p3@0.2.9
+- teambit.typescript/typescript, compile typescript components (9/54). ph-bit.design/ui/backgrounds/gradient@0.2.6
+- teambit.typescript/typescript, compile typescript components (10/54). ph-bit.design/ui/buttons/link@0.2.14
+- teambit.typescript/typescript, compile typescript components (11/54). ph-bit.design/ui/icons/carrot@0.2.8
+- teambit.typescript/typescript, compile typescript components (12/54). ph-bit.design/ui/typography/p1@0.2.11
+- teambit.typescript/typescript, compile typescript components (13/54). ph-bit.design/ui/typography/p2@0.2.11
+- teambit.typescript/typescript, compile typescript components (14/54). ph-bit.design/ui/buttons/pill@0.2.14
+- teambit.typescript/typescript, compile typescript components (15/54). ph-bit.design/ui/icons/plus@0.0.5
+- teambit.typescript/typescript, compile typescript components (16/54). ph-bit.design/ui/cards/preview-card@0.2.23
+- teambit.typescript/typescript, compile typescript components (17/54). ph-bit.design/ui/typography/h6@0.2.11
+- teambit.typescript/typescript, compile typescript components (18/54). ph-bit.design/ui/icons/document@0.0.4
+- teambit.typescript/typescript, compile typescript components (19/54). ph-bit.design/ui/inputs/checkbox@0.2.20
+- teambit.typescript/typescript, compile typescript components (20/54). ph-bit.design/ui/icons/checkmark@0.2.11
+- teambit.typescript/typescript, compile typescript components (21/54). ph-bit.design/ui/dialogs/modal@0.2.18
+- teambit.typescript/typescript, compile typescript components (22/54). ph-bit.design/ui/typography/h5@0.2.11
+- teambit.typescript/typescript, compile typescript components (23/54). ph-bit.design/ui/dialogs/tooltip@0.0.15
+- teambit.typescript/typescript, compile typescript components (24/54). ph-bit.design/ui/typography/fineprint@0.2.15
+- teambit.typescript/typescript, compile typescript components (25/54). ph-bit.design/ui/icons/arrow@0.0.5
+- teambit.typescript/typescript, compile typescript components (26/54). ph-bit.design/ui/icons/circled-checkmark@0.0.11
+- teambit.typescript/typescript, compile typescript components (27/54). ph-bit.design/ui/icons/circled-plus@0.0.5
+- teambit.typescript/typescript, compile typescript components (28/54). ph-bit.design/ui/icons/test-tubes@0.0.4
+- teambit.typescript/typescript, compile typescript components (29/54). ph-bit.design/ui/inputs/date-of-birth@0.2.24
+- teambit.typescript/typescript, compile typescript components (30/54). ph-bit.design/ui/inputs/textfield@0.2.21
+- teambit.typescript/typescript, compile typescript components (31/54). ph-bit.design/ui/inputs/date-picker@0.0.4
+- teambit.typescript/typescript, compile typescript components (32/54). ph-bit.design/ui/inputs/dropdown@0.0.7
+- teambit.typescript/typescript, compile typescript components (33/54). ph-bit.design/ui/inputs/email@0.0.19
+- teambit.typescript/typescript, compile typescript components (34/54). ph-bit.design/ui/inputs/required-textfield@0.0.11
+- teambit.typescript/typescript, compile typescript components (35/54). ph-bit.design/ui/typography/caption@0.2.10
+- teambit.typescript/typescript, compile typescript components (36/54). ph-bit.design/ui/inputs/file-upload@0.0.3
+- teambit.typescript/typescript, compile typescript components (37/54). ph-bit.design/ui/inputs/multiple-choice@0.0.6
+- teambit.typescript/typescript, compile typescript components (38/54). ph-bit.design/ui/inputs/radio@0.2.11
+- teambit.typescript/typescript, compile typescript components (39/54). ph-bit.design/ui/inputs/textarea@0.0.5
+- teambit.typescript/typescript, compile typescript components (40/54). ph-bit.design/ui/inputs/zip-code@0.0.19
+- teambit.typescript/typescript, compile typescript components (41/54). ph-bit.design/ui/layouts/flow@0.2.10
+- teambit.typescript/typescript, compile typescript components (42/54). ph-bit.design/ui/logos/parsley-enterprise@0.0.5
+- teambit.typescript/typescript, compile typescript components (43/54). ph-bit.design/ui/logos/parsley-health@0.2.6
+- teambit.typescript/typescript, compile typescript components (44/54). ph-bit.design/ui/typography/h2@0.2.11
+- teambit.typescript/typescript, compile typescript components (45/54). ph-bit.design/ui/navigation/pagination@0.0.5
+- teambit.typescript/typescript, compile typescript components (46/54). ph-bit.design/ui/navigation/stepper@0.0.3
+- teambit.typescript/typescript, compile typescript components (47/54). ph-bit.design/ui/navigation/stepper-section@0.0.3
+- teambit.typescript/typescript, compile typescript components (48/54). ph-bit.design/ui/typography/h1@0.2.11
+- teambit.typescript/typescript, compile typescript components (49/54). ph-bit.design/ui/typography/h3@0.2.11
+- teambit.typescript/typescript, compile typescript components (50/54). ph-bit.design/ui/typography/h4@0.2.11
+- teambit.typescript/typescript, compile typescript components (51/54). ph-bit.design/ui/typography/label@0.2.8
+- teambit.typescript/typescript, compile typescript components (52/54). ph-bit.design/ui/typography/stat@0.2.11
+- teambit.typescript/typescript, compile typescript components (53/54). ph-bit.design/ui/typography/subtext@0.2.6
+- teambit.typescript/typescript, compile typescript components (54/54). ph-bit.design/ui/typography/subtitle@0.2.11
+- teambit.typescript/typescript, compile typescript components (completed in 16s)
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.compilation/compiler:TSCompiler (compile components for artifact dist)" has completed successfully in 16s
+- teambit.pipelines/builder, running tasks (3/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.defender/tester:TestComponents"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.defender/tester:TestComponents" has completed successfully in 27s
+- teambit.pipelines/builder, running tasks (4/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PreparePackages"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PreparePackages" has completed successfully in 9ms
+- teambit.pipelines/builder, running tasks (5/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/application:build_application"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/application:build_application" has completed successfully in 517μs
+- teambit.pipelines/builder, running tasks (6/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.preview/preview:GenerateEnvTemplate"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.preview/preview:GenerateEnvTemplate" has completed successfully in 3ms
+- teambit.pipelines/builder, running tasks (7/7). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.preview/preview:GeneratePreview"
+- teambit.webpack/webpack, running Webpack bundler (total: 1)
+- teambit.webpack/webpack, running Webpack bundler (1/1). process initiated by: GeneratePreview task. config created by env: ph-bit.utils/envs/tailwind-react@0.2.5. running on 54 components
+- teambit.webpack/webpack, running Webpack bundler (completed in 13s)
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.preview/preview:GeneratePreview" has completed successfully in 14s
+- teambit.pipelines/builder, running tasks (completed in 57s)
+- executing post-build for all tasks
+✔ executing post-build for all tasks
+- teambit.pipelines/builder, running build pipe for 1 environments, total 7 tasks (completed in 57s)
+✔ teambit.pipelines/builder, running build pipe for 1 environments, total 7 tasks (completed in 57s)
+- teambit.workspace/workspace, loading components 
+- teambit.workspace/workspace, loading components (completed in 208μs)
+- teambit.workspace/workspace, loading components (total: 1)
+- teambit.workspace/workspace, loading components (1/1). ph-bit.utils/envs/tailwind-react@0.2.5
+- teambit.workspace/workspace, loading components (completed in 355μs)
+- teambit.pipelines/builder, running tag pipe for 1 environments, total 3 tasks 
+  running tag pipe for 1 environments, total 3 tasks
+  generated graph for env "ph-bit.utils/envs/tailwind-react@0.2.5", originalSeedersOfThisEnv: 54, graphOfThisEnv: 54, graph total: 54
+- executing pre-build for all tasks
+✔ executing pre-build for all tasks
+- teambit.pipelines/builder, running tasks (total: 3)
+- teambit.pipelines/builder, running tasks (1/3). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PackComponents"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PackComponents" has completed successfully in 8s
+- teambit.pipelines/builder, running tasks (2/3). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PublishComponents"
+- teambit.pkg/pkg, publish components 
+- teambit.pkg/pkg, publish components (completed in 484μs)
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.pkg/pkg:PublishComponents" has completed successfully in 2ms
+- teambit.pipelines/builder, running tasks (3/3). env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/application:deploy_application"
+✔ env "ph-bit.utils/envs/tailwind-react@0.2.5", task "teambit.harmony/application:deploy_application" has completed successfully in 217μs
+- teambit.pipelines/builder, running tasks (completed in 8s)
+- executing post-build for all tasks
+✔ executing post-build for all tasks
+- teambit.pipelines/builder, running tag pipe for 1 environments, total 3 tasks (completed in 8s)
+✔ teambit.pipelines/builder, running tag pipe for 1 environments, total 3 tasks (completed in 8s)
+54 component(s) tagged
+(use "bit export [collection]" to push these components to a remote")
+(use "bit reset" to unstage versions)
+
+changed components
+(components that got a version bump)
+     > ph-bit.design/ui/alerts/badge@0.2.9
+     > ph-bit.design/ui/alerts/toast@0.0.4
+     > ph-bit.design/ui/backgrounds/gradient@0.2.6
+     > ph-bit.design/ui/buttons/link@0.2.14
+     > ph-bit.design/ui/buttons/pill@0.2.14
+     > ph-bit.design/ui/cards/preview-card@0.2.23
+     > ph-bit.design/ui/dialogs/modal@0.2.18
+     > ph-bit.design/ui/dialogs/tooltip@0.0.15
+     > ph-bit.design/ui/icons/alert@0.0.4
+     > ph-bit.design/ui/icons/arrow@0.0.5
+     > ph-bit.design/ui/icons/cancel@0.2.8
+     > ph-bit.design/ui/icons/carrot@0.2.8
+     > ph-bit.design/ui/icons/checkmark@0.2.11
+     > ph-bit.design/ui/icons/circled-checkmark@0.0.11
+     > ph-bit.design/ui/icons/circled-plus@0.0.5
+     > ph-bit.design/ui/icons/document@0.0.4
+     > ph-bit.design/ui/icons/info@0.0.6
+     > ph-bit.design/ui/icons/plus@0.0.5
+     > ph-bit.design/ui/icons/success@0.0.4
+     > ph-bit.design/ui/icons/test-tubes@0.0.4
+     > ph-bit.design/ui/inputs/checkbox@0.2.20
+     > ph-bit.design/ui/inputs/date-of-birth@0.2.24
+     > ph-bit.design/ui/inputs/date-picker@0.0.4
+     > ph-bit.design/ui/inputs/dropdown@0.0.7
+     > ph-bit.design/ui/inputs/email@0.0.19
+     > ph-bit.design/ui/inputs/file-upload@0.0.3
+     > ph-bit.design/ui/inputs/multiple-choice@0.0.6
+     > ph-bit.design/ui/inputs/radio@0.2.11
+     > ph-bit.design/ui/inputs/required-textfield@0.0.11
+     > ph-bit.design/ui/inputs/textarea@0.0.5
+     > ph-bit.design/ui/inputs/textfield@0.2.21
+     > ph-bit.design/ui/inputs/zip-code@0.0.19
+     > ph-bit.design/ui/layouts/flow@0.2.10
+     > ph-bit.design/ui/logos/parsley-enterprise@0.0.5
+     > ph-bit.design/ui/logos/parsley-health@0.2.6
+     > ph-bit.design/ui/navigation/pagination@0.0.5
+     > ph-bit.design/ui/navigation/stepper@0.0.3
+     > ph-bit.design/ui/navigation/stepper-section@0.0.3
+     > ph-bit.design/ui/typography/caption@0.2.10
+     > ph-bit.design/ui/typography/eyebrow@0.2.8
+     > ph-bit.design/ui/typography/fineprint@0.2.15
+     > ph-bit.design/ui/typography/h1@0.2.11
+     > ph-bit.design/ui/typography/h2@0.2.11
+     > ph-bit.design/ui/typography/h3@0.2.11
+     > ph-bit.design/ui/typography/h4@0.2.11
+     > ph-bit.design/ui/typography/h5@0.2.11
+     > ph-bit.design/ui/typography/h6@0.2.11
+     > ph-bit.design/ui/typography/label@0.2.8
+     > ph-bit.design/ui/typography/p1@0.2.11
+     > ph-bit.design/ui/typography/p2@0.2.11
+     > ph-bit.design/ui/typography/p3@0.2.9
+     > ph-bit.design/ui/typography/stat@0.2.11
+     > ph-bit.design/ui/typography/subtext@0.2.6
+     > ph-bit.design/ui/typography/subtitle@0.2.11
+
