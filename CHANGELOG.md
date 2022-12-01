@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.0.3] - 2022-12-01
+
+### Fixed
+
+- `bit-tag-export` fixing output issue w/ quotes
+
 ## [v5.0.2] - 2022-11-30
 
 ### Fixed
