@@ -12,6 +12,8 @@ bit install
 
 bit tag --persist >${BIT_CHANGES_OUTPUT_FILE}
 
-echo "BIT_CHANGES=\"$(cat ${BIT_CHANGES_OUTPUT_FILE} | grep '     > ' | sed 's/     > />/g' | tr '\n' ',' | sed 's/,/\\n/g')\"" >>${GITHUB_ENV}
+echo "BIT_CHANGES=$(cat ${BIT_CHANGES_OUTPUT_FILE} | grep '     > ' | sed 's/     > />/g' | tr '\n' ',' | sed 's/,/\\n/g')" >>${GITHUB_ENV}
+
+rm -f ${BIT_CHANGES_OUTPUT_FILE}
 
 bit export
