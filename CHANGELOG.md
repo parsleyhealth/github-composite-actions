@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.1.0] - 2022-12-23
+
+### Fixed
+
+- Print the output of bit tag —persist
+
 ## [v5.0.3] - 2022-12-01
 
 ### Fixed
