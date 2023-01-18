@@ -37,6 +37,6 @@ runs:
         PGPASSWORD: ${{ steps.secrets.outputs.token }}
       run: >
         psql -h localhost -p 5432 
-        -U ${{ inputs. cloudsql-superuser }} 
+        -U ${{ inputs.cloudsql-superuser }} 
         ${{ inputs.db-name }} 
         -f ${{ inputs.db-init-script-path}}
