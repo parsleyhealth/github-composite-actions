@@ -27,12 +27,6 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
-    
-    - id: auth
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{ inputs.gcp-workload-id-provider }}
-        service_account: ${{ inputs.gcp-workload-id-service-account-email }}
         
     - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
       with:
