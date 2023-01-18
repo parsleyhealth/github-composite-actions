@@ -7,12 +7,6 @@ inputs:
   db-name:
     description: 'Database name'
     required: true
-  gcp-workload-id-service-account-email:
-    description: "GCP service account email to assume"
-    required: true
-  gcp-workload-id-provider:
-    description: "GCP workload ID provider name"
-    required: true
   gcp-project-id:
     description: "GCP project of the database"
     required: true
