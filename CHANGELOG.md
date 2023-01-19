@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.2.0]
+
+### Added
+
+- Added new `db-init-action` for using to initialize databases in centralized cloud sql instance
+
 ## [v5.1.0] - 2022-12-23
 
 ### Fixed
