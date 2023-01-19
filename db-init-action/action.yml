@@ -1,0 +1,42 @@
+name: "Initialize Commercial Database"
+Description: Initialize Commercial Database in parsley-services instance"
+inputs:
+  db-instance:
+    description: 'Database instance name'
+    required: true
+  db-name:
+    description: 'Database name'
+    required: true
+  gcp-project-id:
+    description: "GCP project of the database"
+    required: true
+  cloudsql-superuser:
+    description: "User created by Terraform in CloudSQL"
+    required: true
+  db-init-script-path:
+    description: "Path to init script relative to repository root"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+        
+    - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
+      with:
+        instance: ${{ inputs.db-instance }}
+        
+    - id: secrets
+      uses: 'google-github-actions/get-secretmanager-secrets@v1'
+      with:
+        secrets: |-
+          token: ${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }
+          
+    - name: initialize database with sql script
+      env:
+        PGPASSWORD: ${{ steps.secrets.outputs.token }}
+      run: >
+        psql -h localhost -p 5432 
+        -U ${{ inputs.cloudsql-superuser }} 
+        ${{ inputs.db-name }} 
+        -f ${{ inputs.db-init-script-path}}
