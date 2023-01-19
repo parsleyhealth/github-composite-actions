@@ -28,7 +28,7 @@ runs:
       uses: 'google-github-actions/get-secretmanager-secrets@v1'
       with:
         secrets: |-
-          token: ${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }}
+          token:${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }}
           
     - name: initialize database with sql script
       shell: bash
