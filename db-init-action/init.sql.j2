@@ -1,4 +1,4 @@
-CREATE user "{{ db_user }}" WITH PASSWORD "{{ db_pwd }}";
+CREATE user "{{ db_user }}" WITH PASSWORD '{{ db_pwd }}';
 
 CREATE SCHEMA "{{ schema_name }}";
 GRANT CONNECT ON DATABASE "{{ db_name }}" TO migration;
