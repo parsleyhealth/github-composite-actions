@@ -1,7 +1,10 @@
-# build-push-action
+# db-init-action
 
 Composite Github Action that builds and pushes docker image to `gcr.io` repo using workload ID for auth.
 
+## Design Decisions
+Password generator: The inspiration was taken from here: https://github.com/community/community/discussions/39644
+Other Option: https://github.com/licenseware/generate-password-and-hash. But the caveat with this option is 1) the password is not masked by the action and 2) Unnecessarily relying on a third party github action for a simple task
 ## Usage
 
 ```yaml

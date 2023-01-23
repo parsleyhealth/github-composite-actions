@@ -7,11 +7,17 @@ inputs:
   db-name:
     description: 'Database name'
     required: true
+  schema-name:
+    description: 'Schema name'
+    required: true
   gcp-project-id:
     description: "GCP project of the database"
     required: true
   cloudsql-superuser:
     description: "User created by Terraform in CloudSQL"
+    required: true
+  db-user-for-app:
+    description: "User created by this workflow. The user will be used by the service"
     required: true
   db-init-script-path:
     description: "Path to init script relative to repository root"
@@ -20,6 +26,50 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Get DB User for application Secret from secret manager
+    - name: Get Username from Secret Manager
+      id: get-db-username-for-app
+      uses: 'google-github-actions/get-secretmanager-secrets@v1'
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-app }}-username
+      continue-on-error: true
+
+    - name: Get Password from Secret Manager
+      id: get-db-user-password-for-app
+      uses: 'google-github-actions/get-secretmanager-secrets@v1'
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-app }}-password
+      continue-on-error: true
+    
+    - name: Set up gcloud cli
+      uses: 'google-github-actions/setup-gcloud@v1'
+      if: steps.get-db-username-for-app.outcome != 'success' || steps.get-db-user-password-for-app.outcome != 'success'
+
+    - name: Save username to a file
+      shell: bash
+      run: | 
+        echo ${{ inputs.db-user-for-app }} > db-username.txt
+      if: steps.get-db-username-for-app.outcome != 'success'
+
+    - name: Randomly generate password and save to a file
+      shell: bash
+      run: | 
+        RAND_PWD=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-zA-Z0-9" | fold -w 16 | head -n 1)
+        echo "::add-mask::$RAND_PWD"
+        echo $RAND_PWD > db-user-secret.txt
+        echo DB_PWD=$RAND_PWD >> $GITHUB_ENV
+      if: steps.get-db-user-password-for-app.outcome != 'success'
+
+    - name: Create username secret in secret manager
+      run: 'gcloud secrets create ${{ inputs.db-name }}-username --data-file=db-username.txt'
+      if: steps. get-db-username-for-app.outcome != 'success'
+
+    - name: Create password secret in secret manager
+      run: 'gcloud secrets create ${{ inputs.db-name }}-password --data-file=db-user-secret.txt'
+      if: steps.get-db-user-password-for-app.outcome != 'success'
+
     - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
       with:
         instance: ${{ inputs.db-instance }}
@@ -29,7 +79,23 @@ runs:
       with:
         secrets: |-
           token:${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }}
-          
+
+    - name: Render DB init script
+      uses: cuchi/jinja2-action@v1.2.0
+      with:
+        template: ${{ github.action_path }}/init.sql.j2
+        output_file: ${{ github.action_path }}/init.sql
+        strict: true
+        variables: |
+          db_user=${{ inputs.db-user-for-app }}
+          db_pwd=${{ env.DB_PWD }}
+          schema_name=${{ inputs.schema-name }}
+          db_name=${{ inputs.db-name }}
+
+    - name: Print out rendered file 
+      shell: bash
+      run: cat ${{ github.action_path }}/init.sql
+
     - name: initialize database with sql script
       shell: bash
       env:
@@ -38,4 +104,4 @@ runs:
         psql -h localhost -p 5432 
         -U ${{ inputs.cloudsql-superuser }} 
         ${{ inputs.db-name }} 
-        -f ${{ inputs.db-init-script-path}}
+        -f ${{ github.action_path }}/init.sql
