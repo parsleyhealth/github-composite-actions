@@ -5,10 +5,10 @@ inputs:
     description: 'Database instance name'
     required: true
   db-name:
-    description: 'Database name'
+    description: "Database name"
     required: true
   schema-name:
-    description: 'Schema name'
+    description: "Schema name"
     required: true
   gcp-project-id:
     description: "GCP project of the database"
