@@ -60,10 +60,12 @@ runs:
       if: steps.get-db-user-password-for-service.outcome != 'success'
 
     - name: Create username secret in secret manager
+      shell: bash
       run: 'gcloud secrets create ${{ inputs.db-name }}-username --data-file=db-username.txt'
       if: steps. get-db-username-for-service.outcome != 'success'
 
     - name: Create password secret in secret manager
+      shell: bash
       run: 'gcloud secrets create ${{ inputs.db-name }}-password --data-file=db-user-secret.txt'
       if: steps.get-db-user-password-for-service.outcome != 'success'
 
