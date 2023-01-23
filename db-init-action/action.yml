@@ -1,5 +1,5 @@
-name: "Initialize Commercial Database"
-Description: Initialize Commercial Database in parsley-services instance"
+name: "Initialize Database"
+Description: Initialize Database in parsley-services instance"
 inputs:
   db-instance:
     description: 'Database instance name'
@@ -16,7 +16,7 @@ inputs:
   cloudsql-superuser:
     description: "User created by Terraform in CloudSQL"
     required: true
-  db-user-for-app:
+  db-user-for-service:
     description: "User created by this workflow. The user will be used by the service"
     required: true
 
@@ -25,30 +25,30 @@ runs:
   steps:
     # Get DB User for application Secret from secret manager
     - name: Get Username from Secret Manager
-      id: get-db-username-for-app
+      id: get-db-username-for-service
       uses: 'google-github-actions/get-secretmanager-secrets@v1'
       with:
         secrets: |-
-          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-app }}-username
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-service }}-username
       continue-on-error: true
 
     - name: Get Password from Secret Manager
-      id: get-db-user-password-for-app
+      id: get-db-user-password-for-service
       uses: 'google-github-actions/get-secretmanager-secrets@v1'
       with:
         secrets: |-
-          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-app }}-password
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-service }}-password
       continue-on-error: true
     
     - name: Set up gcloud cli
       uses: 'google-github-actions/setup-gcloud@v1'
-      if: steps.get-db-username-for-app.outcome != 'success' || steps.get-db-user-password-for-app.outcome != 'success'
+      if: steps.get-db-username-for-service.outcome != 'success' || steps.get-db-user-password-for-service.outcome != 'success'
 
     - name: Save username to a file
       shell: bash
       run: | 
-        echo ${{ inputs.db-user-for-app }} > db-username.txt
-      if: steps.get-db-username-for-app.outcome != 'success'
+        echo ${{ inputs.db-user-for-service }} > db-username.txt
+      if: steps.get-db-username-for-service.outcome != 'success'
 
     - name: Randomly generate password and save to a file
       shell: bash
@@ -57,15 +57,15 @@ runs:
         echo "::add-mask::$RAND_PWD"
         echo $RAND_PWD > db-user-secret.txt
         echo DB_PWD=$RAND_PWD >> $GITHUB_ENV
-      if: steps.get-db-user-password-for-app.outcome != 'success'
+      if: steps.get-db-user-password-for-service.outcome != 'success'
 
     - name: Create username secret in secret manager
       run: 'gcloud secrets create ${{ inputs.db-name }}-username --data-file=db-username.txt'
-      if: steps. get-db-username-for-app.outcome != 'success'
+      if: steps. get-db-username-for-service.outcome != 'success'
 
     - name: Create password secret in secret manager
       run: 'gcloud secrets create ${{ inputs.db-name }}-password --data-file=db-user-secret.txt'
-      if: steps.get-db-user-password-for-app.outcome != 'success'
+      if: steps.get-db-user-password-for-service.outcome != 'success'
 
     - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
       with:
@@ -84,7 +84,7 @@ runs:
         output_file: ${{ github.action_path }}/init.sql
         strict: true
         variables: |
-          db_user=${{ inputs.db-user-for-app }}
+          db_user=${{ inputs.db-user-for-service }}
           db_pwd=${{ env.DB_PWD }}
           schema_name=${{ inputs.schema-name }}
           db_name=${{ inputs.db-name }}
