@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v5.2.4]
+
+### Added
+
+- db-init-action: Added Secret management and templated init db script
+
 ## [v5.2.3]
 
 ### Fixed

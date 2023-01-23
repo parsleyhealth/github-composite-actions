@@ -19,9 +19,6 @@ inputs:
   db-user-for-app:
     description: "User created by this workflow. The user will be used by the service"
     required: true
-  db-init-script-path:
-    description: "Path to init script relative to repository root"
-    required: true
 
 runs:
   using: "composite"
