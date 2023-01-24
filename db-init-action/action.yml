@@ -92,10 +92,10 @@ runs:
         output_file: .github/workflows/init.sql
         strict: true
         variables: |
-          db_user=${{ inputs.db-user-for-service }}
-          db_pwd=${{ env.DB_PWD }}
-          schema_name=${{ inputs.schema-name }}
-          db_name=${{ inputs.db-name }}
+          db_user=debug-user
+          db_pwd=debug-passwd
+          schema_name=debug-schema
+          db_name=debug-db-name
 
     - name: Print out rendered file 
       shell: bash
