@@ -83,14 +83,13 @@ runs:
       shell: bash
       run: |
         echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
-        cd $GITHUB_ACTION_PATH
-        ls
+        cp $GITHUB_ACTION_PATH/init.sql.j2 .github/workflows/
 
     - name: Render DB init script
       uses: cuchi/jinja2-action@v1.2.0
       with:
-        template: ${{ env.GITHUB_ACTION_PATH }}/init.sql.j2
-        output_file: ${{ env.GITHUB_ACTION_PATH }}/init.sql
+        template: .github/workflows/init.sql.j2
+        output_file: .github/workflows/init.sql
         strict: true
         variables: |
           db_user=${{ inputs.db-user-for-service }}
@@ -110,4 +109,4 @@ runs:
         psql -h localhost -p 5432 
         -U ${{ inputs.cloudsql-superuser }} 
         ${{ inputs.db-name }} 
-        -f ${ GITHUB_ACTION_PATH }/init.sql
+        -f .github/workflows/init.sql
