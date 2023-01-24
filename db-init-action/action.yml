@@ -29,7 +29,7 @@ runs:
       uses: 'google-github-actions/get-secretmanager-secrets@v1'
       with:
         secrets: |-
-          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-service }}-username
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-name }}-username
       continue-on-error: true
 
     - name: Get Password from Secret Manager
@@ -37,7 +37,7 @@ runs:
       uses: 'google-github-actions/get-secretmanager-secrets@v1'
       with:
         secrets: |-
-          token:${{ inputs.gcp-project-id }}/${{ inputs.db-user-for-service }}-password
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-name }}-password
       continue-on-error: true
     
     - name: Set up gcloud cli
