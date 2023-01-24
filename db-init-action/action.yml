@@ -89,8 +89,8 @@ runs:
     - name: Render DB init script
       uses: cuchi/jinja2-action@v1.2.0
       with:
-        template: ${ GITHUB_ACTION_PATH }/init.sql.j2
-        output_file: ${ GITHUB_ACTION_PATH }/init.sql
+        template: ${{ env.GITHUB_ACTION_PATH }}/init.sql.j2
+        output_file: ${{ env.GITHUB_ACTION_PATH }}/init.sql
         strict: true
         variables: |
           db_user=${{ inputs.db-user-for-service }}
