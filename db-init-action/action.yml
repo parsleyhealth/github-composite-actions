@@ -89,7 +89,7 @@ runs:
         strict: true
         variables: |
           db_user=${{ inputs.db-user-for-service }}
-          db_pwd=${DB_PWD:-${{ steps.get-db-username-for-service.output }}}
+          db_pwd=${DB_PWD:-${{ steps.get-db-user-password-for-service.outputs.token }}}
           schema_name=debug-schema
           db_name=debug-db-name
 
