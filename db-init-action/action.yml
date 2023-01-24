@@ -44,12 +44,6 @@ runs:
       uses: 'google-github-actions/setup-gcloud@v1'
       if: steps.get-db-username-for-service.outcome != 'success' || steps.get-db-user-password-for-service.outcome != 'success'
 
-    - name: Save username to a file
-      shell: bash
-      run: | 
-        echo ${{ inputs.db-user-for-service }} > db-username.txt
-      if: steps.get-db-username-for-service.outcome != 'success'
-
     - name: Randomly generate password and save to a file
       shell: bash
       run: | 
@@ -61,7 +55,9 @@ runs:
 
     - name: Create username secret in secret manager
       shell: bash
-      run: 'gcloud secrets create ${{ inputs.db-name }}-username --data-file=db-username.txt'
+      run: >
+        echo ${{ inputs.db-user-for-service }} | 
+        gcloud secrets create ${{ inputs.db-name }}-username --data-file=-'
       if: steps. get-db-username-for-service.outcome != 'success'
 
     - name: Create password secret in secret manager
@@ -92,8 +88,8 @@ runs:
         output_file: .github/workflows/init.sql
         strict: true
         variables: |
-          db_user=debug-user
-          db_pwd=debug-passwd
+          db_user=${{ inputs.db-user-for-service }}
+          db_pwd=${DB_PWD:-${{ steps.get-db-username-for-service.output }}}
           schema_name=debug-schema
           db_name=debug-db-name
 
