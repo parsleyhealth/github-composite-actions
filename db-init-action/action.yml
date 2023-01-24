@@ -82,8 +82,8 @@ runs:
     - name: Render DB init script
       uses: cuchi/jinja2-action@v1.2.0
       with:
-        template: ${{ github.action_path }}/init.sql.j2
-        output_file: ${{ github.action_path }}/init.sql
+        template: ${{ GITHUB_ACTION_PATH }}/init.sql.j2
+        output_file: ${{ GITHUB_ACTION_PATH }}/init.sql
         strict: true
         variables: |
           db_user=${{ inputs.db-user-for-service }}
@@ -93,7 +93,7 @@ runs:
 
     - name: Print out rendered file 
       shell: bash
-      run: cat ${{ github.action_path }}/init.sql
+      run: cat ${{ GITHUB_ACTION_PATH }}/init.sql
 
     - name: initialize database with sql script
       shell: bash
@@ -103,4 +103,4 @@ runs:
         psql -h localhost -p 5432 
         -U ${{ inputs.cloudsql-superuser }} 
         ${{ inputs.db-name }} 
-        -f ${{ github.action_path }}/init.sql
+        -f ${{ GITHUB_ACTION_PATH }}/init.sql
