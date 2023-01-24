@@ -78,6 +78,12 @@ runs:
       with:
         secrets: |-
           token:${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }}
+    
+    - name: Debug GITHUB_ACTION_PATH
+      shell: bash
+      run: >
+        echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
+        ls $GITHUB_ACTION_PATH
 
     - name: Render DB init script
       uses: cuchi/jinja2-action@v1.2.0
@@ -93,7 +99,7 @@ runs:
 
     - name: Print out rendered file 
       shell: bash
-      run: cat ${ GITHUB_ACTION_PATH }/init.sql
+      run: cat $GITHUB_ACTION_PATH/init.sql
 
     - name: initialize database with sql script
       shell: bash
