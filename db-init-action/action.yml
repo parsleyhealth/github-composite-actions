@@ -83,8 +83,8 @@ runs:
       shell: bash
       run: |
         echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
-        cat $GITHUB_ACTION_PATH
         cd $GITHUB_ACTION_PATH
+        ls
 
     - name: Render DB init script
       uses: cuchi/jinja2-action@v1.2.0
