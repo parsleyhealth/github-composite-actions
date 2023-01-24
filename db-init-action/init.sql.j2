@@ -1,0 +1,35 @@
+DO $$
+BEGIN
+CREATE user "{{ db_user }}" WITH PASSWORD '{{ db_pwd }}';
+EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
+END
+$$;
+
+DO $$
+BEGIN
+CREATE ROLE migration;
+EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
+END
+$$;
+
+CREATE SCHEMA IF NOT EXISTS "{{ schema_name }}";
+GRANT CONNECT ON DATABASE "{{ db_name }}" TO migration;
+GRANT USAGE ON SCHEMA "{{ schema_name }}" TO "{{ db_user }}";
+ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON functions FROM public;
+
+GRANT CONNECT ON DATABASE "{{ db_name }}" TO migration;
+GRANT USAGE, CREATE ON SCHEMA "{{ schema_name }}" TO migration;
+GRANT INSERT, UPDATE, DELETE, REFERENCES, TRIGGER, TRUNCATE ON ALL TABLES IN SCHEMA "{{ schema_name }}" TO migration;
+
+DO $$
+BEGIN
+CREATE USER migrate_user;
+EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
+END
+$$;
+
+GRANT migration TO migrate_user;
+
+CREATE extension IF NOT EXISTS pgcrypto;
+CREATE extension IF NOT EXISTS btree_gist;
+CREATE extension IF NOT EXISTS pg_trgm;
