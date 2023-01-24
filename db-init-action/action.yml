@@ -99,7 +99,7 @@ runs:
 
     - name: Print out rendered file 
       shell: bash
-      run: cat $GITHUB_ACTION_PATH/init.sql
+      run: cat .github/workflows/init.sql
 
     - name: initialize database with sql script
       shell: bash
