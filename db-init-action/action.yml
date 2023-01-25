@@ -112,7 +112,7 @@ runs:
       run: >
         echo ${{ env.MIG_PWD }} | 
         gcloud secrets create db-migration-password --data-file=-
-      if: steps.get-db-user-password-for-service.outcome != 'success'
+      if: steps.get-migrate-user-password.outcome != 'success'
 
     - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
       with:
