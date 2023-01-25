@@ -34,8 +34,8 @@ runs:
       with:
         secrets: |-
           token:${{ inputs.gcp-project-id }}/db-migration-username
-
       continue-on-error: true
+
     - name: Get Password from Secret Manager
       id: get-db-user-password-for-service
       uses: google-github-actions/get-secretmanager-secrets@v1
