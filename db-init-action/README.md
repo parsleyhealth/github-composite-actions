@@ -1,9 +1,10 @@
 # db-init-action
 
-Composite Github Action that builds and pushes docker image to `gcr.io` repo using workload ID for auth. This action does the following:
-- Creates two secrets in GCP Secret Manager - username and password for the DB user for service
-- Creates the user in the DB with the username and password
-- Runs the init SQL script templatized in `init.sql.j2`
+Composite Github Action that initializes freshly created databases. This action does the following:
+- Creates four secrets in GCP Secret Manager - username/password for the DB user for service, and username/password for migrate user
+- Creates the users in the DB with the username and password
+- Proxies into Cloud SQL instance `parsley-services`
+- Runs the init SQL script templatized in `init.sql.j2` using the `psql` client
 
 ## Design Decisions
 - **Password generation:** The inspiration was taken from [here](https://github.com/community/community/discussions/39644). This would be [another option](https://github.com/licenseware/generate-password-and-hash). But the caveat with this option is 1) the password is not masked by the action and 2) Unnecessarily relying on a third party github action for a simple task
