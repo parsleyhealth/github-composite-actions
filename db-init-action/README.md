@@ -6,9 +6,9 @@ Composite Github Action that builds and pushes docker image to `gcr.io` repo usi
 - Runs the init SQL script templatized in `init.sql.j2`
 
 ## Design Decisions
-Password generator: The inspiration was taken from here: https://github.com/community/community/discussions/39644
+- **Password generation:** The inspiration was taken from [here](https://github.com/community/community/discussions/39644). This would be [another option](https://github.com/licenseware/generate-password-and-hash). But the caveat with this option is 1) the password is not masked by the action and 2) Unnecessarily relying on a third party github action for a simple task
 
-Other Option: https://github.com/licenseware/generate-password-and-hash. But the caveat with this option is 1) the password is not masked by the action and 2) Unnecessarily relying on a third party github action for a simple task
+- **DB user creation in init script:** The error handling of the script init.sql was inspired from [here](https://stackoverflow.com/questions/8092086/create-postgresql-role-user-if-it-doesnt-exist/8099557?noredirect=1#comment85209018_8099557)
 
 ## Usage
 
@@ -37,6 +37,5 @@ jobs:
 - **schema-name**: Name of the schema in the database
 - **gcp-project-id**: The GCP project where the Cloud SQL instance resides
 - **cloudsql-superuser**: User with cloudsqlsuperuser privileges in the Cloud SQL instance. This user is created by Terraform. [Link to Terraform Code](https://github.com/parsleyhealth/terraform-cloud-sql/blob/main/variables.tf#L11)
-- **db-init-script-path**: Path to init script relative to root of repository
 - **gcp-workload-id-provider**: GCP project ID to use for docker image repo
 - **gcp-workload-id-service-account-email** - ServiceAccount for github workload
