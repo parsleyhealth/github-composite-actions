@@ -1,11 +1,14 @@
-name: "Initialize Commercial Database"
-Description: Initialize Commercial Database in parsley-services instance"
+name: Initialize Database
+Description: Initialize Database in parsley-services instance
 inputs:
   db-instance:
-    description: 'Database instance name'
+    description: "Database instance name"
     required: true
   db-name:
-    description: 'Database name'
+    description: "Database name"
+    required: true
+  schema-name:
+    description: "Schema name"
     required: true
   gcp-project-id:
     description: "GCP project of the database"
@@ -13,23 +16,144 @@ inputs:
   cloudsql-superuser:
     description: "User created by Terraform in CloudSQL"
     required: true
-  db-init-script-path:
-    description: "Path to init script relative to repository root"
-    required: true
 
 runs:
   using: "composite"
   steps:
+    - name: Get Username from Secret Manager
+      id: get-db-username-for-service
+      uses: google-github-actions/get-secretmanager-secrets@v1
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-name }}-db-username
+      continue-on-error: true
+
+    - name: Get Username for Migration user from Secret Manager
+      id: get-migrate-username
+      uses: google-github-actions/get-secretmanager-secrets@v1
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/db-migration-username
+      continue-on-error: true
+
+    - name: Get Password from Secret Manager
+      id: get-db-user-password-for-service
+      uses: google-github-actions/get-secretmanager-secrets@v1
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/${{ inputs.db-name }}-db-password
+      continue-on-error: true
+
+    - name: Get Password from Secret Manager
+      id: get-migrate-user-password
+      uses: google-github-actions/get-secretmanager-secrets@v1
+      with:
+        secrets: |-
+          token:${{ inputs.gcp-project-id }}/db-migration-password
+      continue-on-error: true
+
+    - name: Set up gcloud cli
+      uses: google-github-actions/setup-gcloud@v1
+      if: >
+        steps.get-db-username-for-service.outcome != 'success' || 
+        steps.get-db-user-password-for-service.outcome != 'success' || 
+        steps.get-migrate-username.outcome != 'success' || 
+        steps.get-migrate-user-password.outcome != 'success'
+
+    - name: Randomly generate password and save to an env var
+      shell: bash
+      run: | 
+        RAND_PWD=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-zA-Z0-9" | fold -w 16 | head -n 1)
+        echo "::add-mask::$RAND_PWD"
+        echo DB_PWD=$RAND_PWD >> $GITHUB_ENV
+      if: steps.get-db-user-password-for-service.outcome != 'success'
+
+    - name: Create username env var
+      shell: bash
+      run: |
+        echo "DB_USR=${{ inputs.db-name }}_user" >> $GITHUB_ENV
+
+    - name: Create username secret in secret manager
+      shell: bash
+      run: >
+        echo "${{ env.DB_USR }}" | 
+        gcloud secrets create ${{ inputs.db-name }}-db-username --data-file=-
+      if: steps.get-db-username-for-service.outcome != 'success'
+
+    - name: Create password secret in secret manager
+      shell: bash
+      run: >
+        echo ${{ env.DB_PWD }} | 
+        gcloud secrets create ${{ inputs.db-name }}-db-password --data-file=-
+      if: steps.get-db-user-password-for-service.outcome != 'success'
+
+    - name: Randomly generate migration user password and save to an env var
+      shell: bash
+      run: | 
+        MIG_PWD=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-zA-Z0-9" | fold -w 16 | head -n 1)
+        echo "::add-mask::$MIG_PWD"
+        echo MIG_PWD=$MIG_PWD >> $GITHUB_ENV
+      if: steps.get-migrate-user-password.outcome != 'success'
+
+    - name: Create migrateion username env var
+      shell: bash
+      run: |
+        echo "MIG_USR=migrate_user" >> $GITHUB_ENV
+
+    - name: Create username secret in secret manager
+      shell: bash
+      run: >
+        echo "${{ env.MIG_USR }}" | 
+        gcloud secrets create db-migration-username --data-file=-
+      if: steps.get-migrate-username.outcome != 'success'
+
+    - name: Create password secret in secret manager
+      shell: bash
+      run: >
+        echo ${{ env.MIG_PWD }} | 
+        gcloud secrets create db-migration-password --data-file=-
+      if: steps.get-migrate-user-password.outcome != 'success'
+
     - uses: wagnerpereira/gce-cloudsql-proxy-action@v2
       with:
         instance: ${{ inputs.db-instance }}
         
     - id: secrets
-      uses: 'google-github-actions/get-secretmanager-secrets@v1'
+      uses: google-github-actions/get-secretmanager-secrets@v1
       with:
         secrets: |-
           token:${{ inputs.gcp-project-id }}/${{ inputs.cloudsql-superuser }}
-          
+
+    - name: Set password env var
+      shell: bash
+      run: |
+        DB_PWD=${DB_PWD:-${{ steps.get-db-user-password-for-service.outputs.token }}}
+        echo "::add-mask::$DB_PWD"
+        echo "DB_PWD=$DB_PWD" >> $GITHUB_ENV
+
+    - name: Copy file to directory where Jinja action can see the file
+      shell: bash
+      run: |
+        cp $GITHUB_ACTION_PATH/init.sql.j2 ${{ github.workspace }}/
+
+    - name: Render DB init script
+      uses: cuchi/jinja2-action@v1.2.0
+      with:
+        template: ${{ github.workspace }}/init.sql.j2
+        output_file: ${{ github.workspace }}/init.sql
+        strict: true
+        variables: |
+          db_user=${{ env.DB_USR }}
+          db_pwd=${{ env.DB_PWD }}
+          schema_name=${{ inputs.schema-name }}
+          db_name=${{ inputs.db-name }}
+          migrate_user=${{ env.MIG_USR }}
+          migrate_pwd=${{ env.MIG_PWD }}
+
+    - name: Print out rendered file 
+      shell: bash
+      run: cat ${{ github.workspace }}/init.sql
+
     - name: initialize database with sql script
       shell: bash
       env:
@@ -38,4 +162,9 @@ runs:
         psql -h localhost -p 5432 
         -U ${{ inputs.cloudsql-superuser }} 
         ${{ inputs.db-name }} 
-        -f ${{ inputs.db-init-script-path}}
+        -v "ON_ERROR_STOP=1" 
+        -f ${{ github.workspace }}/init.sql
+    
+    - name: Clean up init sql files
+      shell: bash
+      run: rm ${{ github.workspace }}/init.sql*
