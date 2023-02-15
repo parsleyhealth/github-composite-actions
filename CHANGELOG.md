@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.0.1]
+
+### Updated
+
+- setup-node: Updated settings to support `bit.dev` etc.
+
 ## [v6.0.0]
 
 ### Added
@@ -25,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- db-init-action: got rid of checkout 
+- db-init-action: got rid of checkout
 
 ## [v5.2.1]
 
