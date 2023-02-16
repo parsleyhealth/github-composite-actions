@@ -1,0 +1,29 @@
+name: Sonar cloud scan
+description: General Sonar Qube scan
+inputs:
+  github-token:
+    description: Github token
+    required: true
+  sonar-token:
+    description: Sonar Cloud token
+    required: true
+  sonar-project-propeties-path:
+    description: Sonar configuration file path
+    required: false
+    default: "./sonar-project.properties"
+
+
+outputs: {}
+
+runs:
+  using: composite
+  steps:
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dproject.settings=${{ inputs.sonar-project-propeties-path }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        SONAR_TOKEN: ${{ inputs.sonar-token }}
+  
