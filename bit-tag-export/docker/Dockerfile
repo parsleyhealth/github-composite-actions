@@ -1,4 +1,4 @@
-ARG IMAGE_TAG=latest-node-16.15.0
+ARG IMAGE_TAG=0.0.998-node-16.15.0
 
 FROM bitcli/bit-non-root:${IMAGE_TAG}
 
