@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.1.0]
+
+### Updated
+
+- Change bit version
+
 ## [v7.0.1]
 
 ### Updated
