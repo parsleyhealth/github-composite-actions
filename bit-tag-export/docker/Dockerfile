@@ -1,6 +1,9 @@
 # Use the official Node.js 18 image with Debian Bullseye (slim)
 FROM node:18-bullseye-slim
 
+# Install required dependencies
+RUN apt update && apt install -y curl
+
 # Install Bit CLI and other dependencies
 RUN npx @teambit/bvm install < /dev/null
 
@@ -16,6 +19,9 @@ COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 USER user
+
+# Add Bit CLI to the PATH
+ENV PATH="/root/.bvm:${PATH}"
 
 # Add a health check command
 HEALTHCHECK CMD node --version || exit 1
