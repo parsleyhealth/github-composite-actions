@@ -2,8 +2,8 @@
 FROM node:18-bullseye-slim
 
 # Install Bit CLI
-RUN npm install -g @teambit/bvm && \
-    bit config set analytics_reporting false && \
+RUN npx @teambit/bvm install < /dev/null
+RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
 
 # Set the entrypoint to run the action script
