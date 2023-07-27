@@ -5,7 +5,7 @@ FROM node:18-bullseye-slim
 RUN npx @teambit/bvm install < /dev/null
 
 # Add Bit CLI to the PATH
-ENV PATH="/root/.bvm:${PATH}"
+ENV PATH="/root/.bvm:/root/bin:${PATH}"
 
 # Set Bit configurations
 RUN bit config set analytics_reporting false && \
