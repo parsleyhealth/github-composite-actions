@@ -18,7 +18,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
-USER user
 
 # Add Bit CLI to the PATH
 ENV PATH="/root/.bvm:${PATH}"
