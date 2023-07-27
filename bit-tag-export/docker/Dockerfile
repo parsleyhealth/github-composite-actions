@@ -16,7 +16,6 @@ RUN bit config set analytics_reporting false && \
 
 # Add .npmrc
 COPY npmrc.tpl /.npmrc
-RUN sed -i "s/{BIT_TOKEN}/${bit-token}/g" /.npmrc
 
 # Set the entrypoint to run the action script
 ENTRYPOINT ["/entrypoint.sh"]
