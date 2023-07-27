@@ -14,6 +14,10 @@ ENV PATH="/root/.bvm:/root/bin:${PATH}"
 RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
 
+# Add .npmrc
+COPY npmrc.tpl /.npmrc
+RUN sed 's/{BIT_TOKEN}/${bit-token}/g' /.npmrc
+
 # Set the entrypoint to run the action script
 ENTRYPOINT ["/entrypoint.sh"]
 
