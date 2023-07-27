@@ -21,7 +21,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
-USER user
 
-# Add a health check command
+# Add a health check command 
 HEALTHCHECK CMD node --version || exit 1
