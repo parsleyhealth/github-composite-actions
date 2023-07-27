@@ -3,7 +3,6 @@ FROM node:18-bullseye-slim
 
 # Install Bit CLI and other dependencies
 RUN npx @teambit/bvm install < /dev/null
-RUN npm install -g @teambit/bit
 
 # Set Bit configurations
 RUN bit config set analytics_reporting false && \
