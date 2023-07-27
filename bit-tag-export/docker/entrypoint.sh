@@ -10,6 +10,8 @@ if [ -z "$BIT_TOKEN" ]; then
 fi
 BIT_CHANGES_OUTPUT_FILE=${GITHUB_WORKSPACE}/bit-tag.out
 
+sed -i "s/{BIT_TOKEN}/${BIT_TOKEN}/g" /.npmrc
+
 bit config set analytics_reporting false
 bit config set anonymous_reporting false
 bit config set user.token ${BIT_TOKEN}
