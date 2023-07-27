@@ -1,6 +1,9 @@
 # Use the official Node.js 18 image with Debian Bullseye (slim)
 FROM node:18-bullseye-slim
 
+# Install required dependencies
+RUN apt update && apt install -y git
+
 # Install Bit CLI and other dependencies
 RUN npx @teambit/bvm install < /dev/null
 
