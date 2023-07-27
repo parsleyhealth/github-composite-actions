@@ -18,4 +18,4 @@ runs:
   using: docker
   image: Dockerfile
   args:
-    - ${{ inputs.bit-token }}
+  - ${{ inputs.bit-token }}

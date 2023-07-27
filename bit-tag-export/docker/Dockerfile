@@ -1,12 +1,16 @@
-ARG IMAGE_TAG=latest-node-18.16.1
-# ARG IMAGE_TAG=0.0.998-node-16.15.0
+# Use the official Node.js 18 image with Debian Bullseye (slim)
+FROM node:18-bullseye-slim
 
-FROM bitcli/bit-non-root:${IMAGE_TAG}
+# Install Bit CLI
+RUN npm install -g @teambit/bvm && \
+    bit config set analytics_reporting false && \
+    bit config set error_reporting false
 
+# Set the entrypoint to run the action script
 COPY entrypoint.sh /entrypoint.sh
 
 USER root
-RUN chmod +x /entrypoint.sh 
-USER user 
+RUN chmod +x /entrypoint.sh
+USER user
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT ["/entrypoint.sh"]
