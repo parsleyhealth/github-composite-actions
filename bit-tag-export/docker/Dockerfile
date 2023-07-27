@@ -2,8 +2,8 @@
 FROM node:18-bullseye-slim
 
 # Install Bit CLI and other dependencies
-RUN npm install -g @teambit/bvm && \
-    npm install -g @teambit/bit
+RUN npx @teambit/bvm install < /dev/null
+RUN npm install -g @teambit/bit
 
 # Set Bit configurations
 RUN bit config set analytics_reporting false && \
@@ -18,3 +18,6 @@ COPY entrypoint.sh /entrypoint.sh
 USER root
 RUN chmod +x /entrypoint.sh
 USER user
+
+# Add a health check command
+HEALTHCHECK CMD node --version || exit 1
