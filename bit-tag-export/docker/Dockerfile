@@ -1,16 +1,22 @@
 # Use the official Node.js 18 image with Debian Bullseye (slim)
 FROM node:18-bullseye-slim
 
-# Install Bit CLI
-RUN npm install -g @teambit/bvm && \
-    bit config set analytics_reporting false && \
+# Install Bit CLI and other dependencies
+RUN npx @teambit/bvm install < /dev/null
+
+# Set Bit configurations
+RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
 
 # Set the entrypoint to run the action script
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Copy the entrypoint script into the image
 COPY entrypoint.sh /entrypoint.sh
 
 USER root
 RUN chmod +x /entrypoint.sh
 USER user
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Add a health check command
+HEALTHCHECK CMD node --version || exit 1
