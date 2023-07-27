@@ -4,6 +4,9 @@ FROM node:18-bullseye-slim
 # Install Bit CLI and other dependencies
 RUN npx @teambit/bvm install < /dev/null
 
+# Add Bit CLI to the PATH
+ENV PATH="/root/.bvm:${PATH}"
+
 # Set Bit configurations
 RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
@@ -14,7 +17,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 # Copy the entrypoint script into the image
 COPY entrypoint.sh /entrypoint.sh
 
-USER root
 RUN chmod +x /entrypoint.sh
 USER user
 
