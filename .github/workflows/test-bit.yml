@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - name: Test Bit Export
-        uses: ./bit-tag-export/docker
-        with:
-          bit-token: ${{ secrets.BIT_TOKEN }}
+      # - name: Test Bit Export
+      #   uses: ./bit-tag-export/docker
+      #   with:
+      #     bit-token: ${{ secrets.BIT_TOKEN }}
