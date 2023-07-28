@@ -1,0 +1,22 @@
+name: "Test Bit Actions"
+
+on: push
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-bit:
+    runs-on: ubuntu-latest
+
+    env:
+      BIT_TOKEN: ${{ secrets.BIT_TOKEN }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      # - name: Test Bit Export
+      #   uses: ./bit-tag-export/docker
+      #   with:
+      #     bit-token: ${{ secrets.BIT_TOKEN }}

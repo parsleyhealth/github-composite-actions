@@ -15,7 +15,7 @@ RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
 
 # Add .npmrc
-COPY npmrc.tpl /.npmrc
+COPY npmrc.tpl /root/.npmrc
 
 # Set the entrypoint to run the action script
 ENTRYPOINT ["/entrypoint.sh"]
