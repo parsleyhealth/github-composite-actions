@@ -11,11 +11,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - id: validate-version
+        run: |
+          if [[ ! -s version.txt ]]; then
+            echo "Error: version.txt file is empty or doesn't exist."
+            exit 1
+          fi
+
       - id: tag
         run: |
-          echo "::set-output name=version::$(cat version.txt | awk -F '=' '{ print $2 }')"
+          echo "version=$(cat version.txt | awk -F '=' '{ print $2 }')" >> $GITHUB_ENV
 
-      - uses: fischerscode/tagger@v0.1
-        with:
-          prefix: v
-          tag: v${{ steps.tag.outputs.version }}
+      - name: Run fischerscode/tagger
+        if: ${{ success() }}
+        env:
+          VERSION: ${{ env.version }}
+        run: |
+          if [[ -z "${{ env.VERSION }}" ]]; then
+            echo "Error: Failed to get the version from the previous step."
+            exit 1
+          fi
+          echo "Running fischerscode/tagger with version v${{ env.VERSION }}"
