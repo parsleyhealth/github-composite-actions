@@ -12,6 +12,6 @@ outputs:
 
 runs:
   using: docker
-  image: Dockerfile
+  image: us-east1-docker.pkg.dev/parsley-artifacts/parsley-bit/bit-tag-export:latest
   args:
     - ${{ inputs.bit-token }}

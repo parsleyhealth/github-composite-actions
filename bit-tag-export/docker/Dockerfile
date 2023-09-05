@@ -15,15 +15,12 @@ RUN bit config set analytics_reporting false && \
     bit config set error_reporting false
 
 # Add .npmrc
-COPY npmrc.tpl /root/.npmrc
-
-# Set the entrypoint to run the action script
-ENTRYPOINT ["/entrypoint.sh"]
+COPY npmrc.tpl /etc/npmrc
 
 # Copy the entrypoint script into the image
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
-# Add a health check command 
-HEALTHCHECK CMD node --version || exit 1
+# Set the entrypoint to run the action script
+ENTRYPOINT ["/entrypoint.sh"]
