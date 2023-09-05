@@ -27,14 +27,6 @@ runs:
     - uses: actions/checkout@v3
       with:
         token: ${{ inputs.parsley-bot-token }}
-        
-    - name: Authenticate to Google Cloud
-      id: auth
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: ${{ inputs.gcp-workload-id-provider }}
-        service_account: ${{ inputs.gcp-workload-id-service-account-email }}
-        token_format: "access_token"
 
     - name: Run bit export
       uses: parsleyhealth/github-composite-actions/bit-tag-export/docker@main
