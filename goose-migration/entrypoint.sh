@@ -12,7 +12,7 @@ if [ -z $GOOGLE_APPLICATION_CREDENTIALS ]; then
     exit 1
 fi
 
-goose_version=v3.17.0
+goose_version=${1:-"latest"}
 cloud_sql_instance=${2:?"cloud-sql-instance is not set"}
 conn_retries=${3:-5}
 
