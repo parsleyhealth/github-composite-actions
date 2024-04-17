@@ -14,6 +14,4 @@ COPY --from=atlas /atlas /atlas
 
 COPY entrypoint.sh /
 
-WORKDIR /labs
-
 ENTRYPOINT [ "/entrypoint.sh" ]
