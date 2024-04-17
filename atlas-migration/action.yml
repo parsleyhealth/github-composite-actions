@@ -24,4 +24,4 @@ runs:
     - uses: actions/checkout@v3
 
     - shell: bash
-      run: docker run --rm --net=host arigaio/atlas ${{ inputs.atlas-command }}
+      run: docker run --rm -v $(pwd):/ --net=host arigaio/atlas ${{ inputs.atlas-command }}
