@@ -7,7 +7,8 @@ inputs:
     required: true
   cloud-sql-instance:
     description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5432`"
-    required: true
+    required: false
+    default: ""
   migrations-dir:
     description: "Location of migration files relative from repository root"
     required: false
@@ -22,6 +23,6 @@ runs:
   image: Dockerfile
   env:
     ATLAS_COMMAND: -dir $GITHUB_WORKSPACE${{ inputs.migrations-dir }} ${{ inputs.atlas-command }}
+    CLOUD_SQL_INSTANCE: ${{ inputs.cloud-sql-instance }}
   args:
-    - ${{ inputs.cloud-sql-instance }}
     - ${{ inputs.retries }}
