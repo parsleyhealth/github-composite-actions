@@ -22,7 +22,7 @@ runs:
   using: docker
   image: Dockerfile
   env:
-    ATLAS_COMMAND: -dir $GITHUB_WORKSPACE${{ inputs.migrations-dir }} ${{ inputs.atlas-command }}
+    ATLAS_COMMAND: ${{ inputs.atlas-command }}
     CLOUD_SQL_INSTANCE: ${{ inputs.cloud-sql-instance }}
   args:
     - ${{ inputs.retries }}
