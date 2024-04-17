@@ -19,10 +19,10 @@ inputs:
     default: "5"
 
 runs:
-  using: docker
-  image: Dockerfile
-  env:
-    ATLAS_COMMAND: ${{ inputs.atlas-command }}
-    CLOUD_SQL_INSTANCE: ${{ inputs.cloud-sql-instance }}
-  args:
-    - ${{ inputs.retries }}
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - shell: bash
+      run: |
+        docker run --rm --net=host arigaio/atlas ${{ inputs.atlas-command }
