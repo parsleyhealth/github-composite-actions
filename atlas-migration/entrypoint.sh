@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 [ ! -z $DEBUG ] && [ $DEBUG -eq 1 ] && set -x
 
