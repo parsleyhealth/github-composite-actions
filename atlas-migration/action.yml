@@ -1,0 +1,27 @@
+name: "Atlas Migration"
+description: "Run atlas database migration using cloud sql proxy"
+
+inputs:
+  atlas-command:
+    description: "Command to issue to Atlas"
+    required: true
+  cloud-sql-instance:
+    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5432`"
+    required: true
+  migrations-dir:
+    description: "Location of migration files relative from repository root"
+    required: false
+    default: ""
+  retries:
+    description: "Amount of times to retry Atlas command on failure"
+    required: false
+    default: "5"
+
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    ATLAS_COMMAND: -dir $GITHUB_WORKSPACE${{ inputs.migrations-dir }} ${{ inputs.atlas-command }}
+  args:
+    - ${{ inputs.cloud-sql-instance }}
+    - ${{ inputs.retries }}
