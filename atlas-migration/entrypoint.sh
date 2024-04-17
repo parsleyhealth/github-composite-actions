@@ -25,7 +25,7 @@ run_w_retry() {
 
     until [ ${current_try} -gt ${ret} ] || [ ${success} -eq 0 ]; do
         echo "trying (${current_try}/${ret})"
-        eval "atlas ${ATLAS_COMMAND}"
+        eval "/atlas ${ATLAS_COMMAND}"
         success=$?
         if [ ${success} -eq 0 ]; then
             break
@@ -37,13 +37,6 @@ run_w_retry() {
     # if retries is hit, success will signify exit code > 0 (error)
     return ${success}
 }
-
-#install atlas
-curl -sSf https://atlasgo.sh | sh
-if [ $? -gt 0 ]; then
-    echo "could not install Atlas, exiting"
-    exit 1
-fi
 
 # Start a headless cloudsql proxy and capture pid
 if [[ -n "${cloud_sql_instance}" ]]; then
@@ -58,7 +51,9 @@ run_w_retry ${conn_retries}
 res=$?
 
 # shut down cloudsql pid
-kill -s TERM $(cat ${csp_pid})
+if [[ -n "${cloud_sql_instance}" ]]; then
+  kill -s TERM $(cat ${csp_pid})
+fi
 
 # Exit with goose retry result
 exit $res
