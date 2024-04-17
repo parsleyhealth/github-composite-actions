@@ -9,7 +9,6 @@ fi
 
 if [ -z $GOOGLE_APPLICATION_CREDENTIALS ]; then
     echo "$$GOOGLE_APPLICATION_CREDENTIALS has not been set, cannot connect to CloudSQL"
-    exit 1
 fi
 
 cloud_sql_instance=$CLOUD_SQL_INSTANCE
