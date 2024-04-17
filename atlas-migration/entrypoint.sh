@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 
 [ ! -z $DEBUG ] && [ $DEBUG -eq 1 ] && set -x
 
@@ -12,8 +12,8 @@ if [ -z $GOOGLE_APPLICATION_CREDENTIALS ]; then
     exit 1
 fi
 
-cloud_sql_instance=${2:?"cloud-sql-instance is not set"}
-conn_retries=${3:-5}
+cloud_sql_instance=$CLOUD_SQL_INSTANCE
+conn_retries=${2:-5}
 
 res=1
 current_try=
@@ -47,10 +47,12 @@ if [ $? -gt 0 ]; then
 fi
 
 # Start a headless cloudsql proxy and capture pid
-/cloud_sql_proxy \
-    -credential_file ${GOOGLE_APPLICATION_CREDENTIALS} \
-    -instances=${cloud_sql_instance} &
-echo $! >${csp_pid}
+if [[ -n "${cloud_sql_instance}" ]]; then
+  /cloud_sql_proxy \
+      -credential_file ${GOOGLE_APPLICATION_CREDENTIALS} \
+      -instances=${cloud_sql_instance} &
+  echo $! >${csp_pid}
+fi
 
 # Run atlas command with retry and capture result
 run_w_retry ${conn_retries}
