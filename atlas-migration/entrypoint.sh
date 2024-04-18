@@ -7,12 +7,17 @@ if [ -z $ATLAS_COMMAND ]; then
     exit 1
 fi
 
+if [ -z $CLOUD_SQL_INSTANCE ]; then
+    echo "$$CLOUD_SQL_INSTANCE has not been set"
+    exit 1
+fi
+
 if [ -z $GOOGLE_APPLICATION_CREDENTIALS ]; then
     echo "$$GOOGLE_APPLICATION_CREDENTIALS has not been set, cannot connect to CloudSQL"
 fi
 
 cloud_sql_instance=$CLOUD_SQL_INSTANCE
-conn_retries=${2:-5}
+conn_retries=${1:-5}
 
 res=1
 current_try=
@@ -39,21 +44,17 @@ run_w_retry() {
 }
 
 # Start a headless cloudsql proxy and capture pid
-if [[ -n "${cloud_sql_instance}" ]]; then
-  /cloud_sql_proxy \
-      -credential_file ${GOOGLE_APPLICATION_CREDENTIALS} \
-      -instances=${cloud_sql_instance} &
-  echo $! >${csp_pid}
-fi
+/cloud_sql_proxy \
+    -credential_file ${GOOGLE_APPLICATION_CREDENTIALS} \
+    -instances=${cloud_sql_instance} &
+echo $! >${csp_pid}
 
 # Run atlas command with retry and capture result
 run_w_retry ${conn_retries}
 res=$?
 
 # shut down cloudsql pid
-if [[ -n "${cloud_sql_instance}" ]]; then
-  kill -s TERM $(cat ${csp_pid})
-fi
+kill -s TERM $(cat ${csp_pid})
 
 # Exit with goose retry result
 exit $res

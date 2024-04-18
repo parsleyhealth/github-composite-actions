@@ -1,0 +1,15 @@
+name: "Atlas Command"
+description: "Run atlas commands against a dev database"
+
+inputs:
+  atlas-command:
+    description: "Command to issue to Atlas CLI"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - shell: bash
+      run: docker run --rm -v $(pwd):/migrations --net=host arigaio/atlas ${{ inputs.atlas-command }}
