@@ -11,7 +11,7 @@ inputs:
     default: ""
   migrations-dir:
     description: "Location of migration files relative from repository root"
-    required: true
+    required: false
     default: ""
   retries:
     description: "Amount of times to retry Atlas command on failure"
@@ -22,7 +22,7 @@ runs:
   using: docker
   image: Dockerfile
   env:
-    ATLAS_COMMAND: ${{ inputs.atlas-command }} --dir "file://$GITHUB_WORKSPACE${{ inputs.migrations-dir }}"
+    ATLAS_COMMAND: ${{ inputs.atlas-command }}
     CLOUD_SQL_INSTANCE: ${{ inputs.cloud-sql-instance }}
   args:
     - ${{ inputs.retries }}
