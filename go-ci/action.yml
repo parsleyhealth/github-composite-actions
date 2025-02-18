@@ -51,6 +51,7 @@ runs:
     - uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.go-version }}
+        cache: false
 
     - name: Configure git for private modules
       shell: bash
@@ -76,12 +77,3 @@ runs:
       with:
         args: -no-fail -fmt=sonarqube -out security-report.json ./...
 
-    - name: SonarCloud scan
-      uses: SonarSource/sonarcloud-github-action@master
-      with:
-        args: >
-          -Dsonar.organization=${{ inputs.sonar-org }}
-          -Dsonar.projectKey=${{ inputs.sonar-project-key }}
-      env:
-        GITHUB_TOKEN: ${{ inputs.pat }}
-        SONAR_TOKEN: ${{ inputs.sonar-token }}
