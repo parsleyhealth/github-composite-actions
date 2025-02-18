@@ -38,14 +38,14 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Cache node_modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
 
     - name: Cache Playwright
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.cache/ms-playwright
