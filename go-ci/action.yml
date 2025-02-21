@@ -71,9 +71,3 @@ runs:
       shell: bash
       run: ${{ inputs.test-cmd }}
 
-    - name: Gosec
-      uses: securego/gosec@master
-      if: inputs.run-gosec == 'true'
-      with:
-        args: -no-fail -fmt=sonarqube -out security-report.json ./...
-
