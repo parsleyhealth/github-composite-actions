@@ -1,6 +1,6 @@
 FROM gcr.io/cloudsql-docker/gce-proxy as cloudsql-proxy
 
-FROM arigaio/atlas as atlas
+FROM arigaio/atlas:0.37.0 as atlas
 
 FROM golang:1.19-alpine
 
