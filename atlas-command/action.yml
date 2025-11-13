@@ -12,4 +12,4 @@ runs:
     - uses: actions/checkout@v3
 
     - shell: bash
-      run: docker run --rm -v $(pwd):/migrations --net=host arigaio/atlas ${{ inputs.atlas-command }}
+      run: docker run --rm -v $(pwd):/migrations --net=host arigaio/atlas:0.37.0 ${{ inputs.atlas-command }}
