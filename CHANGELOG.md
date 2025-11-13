@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.4.2]
+
+### Updated
+
+- Update Atlas to v0.37.0
+
 ## [v7.4.1]
 
 ### Removed
