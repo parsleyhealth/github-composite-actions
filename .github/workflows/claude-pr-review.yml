@@ -1,0 +1,74 @@
+name: Claude PR Review
+
+on:
+  workflow_call:
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  claude-interactive:
+    if: |
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 10
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
+
+  claude-auto-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            TRIGGER: ${{ github.event.action }}
+
+            You are reviewing a pull request. The PR branch is already checked out.
+
+            **Step 1: Determine context.**
+            - Run `gh pr view ${{ github.event.pull_request.number }} --json comments,reviews` to check for existing review comments.
+            - If this is a `synchronize` event (new push) AND there are existing review comments, this is a follow-up review. If this is an `opened` event or there are no prior comments, this is a fresh review.
+
+            **Step 2: Review accordingly.**
+
+            For a FRESH review (opened, no prior comments):
+            - Review the full PR diff with a focus on: code quality, potential bugs, security implications, and performance.
+            - Be thorough but concise. Group related feedback together.
+
+            For a FOLLOW-UP review (synchronize, prior comments exist):
+            - Run `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` to read previous review comments.
+            - Focus on what changed in the latest push. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
+            - Check if previous feedback was addressed. Acknowledge what was fixed.
+            - Only raise NEW issues or re-emphasize critical unresolved ones. Do not repeat feedback that was already addressed.
+            - If everything looks good, a brief "Changes look good, previous feedback addressed" is sufficient.
+
+            **Step 3: Post feedback.**
+            - Use `gh pr comment ${{ github.event.pull_request.number }}` for your feedback.
+            - Only post GitHub comments — don't submit review text as messages.
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 10
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
