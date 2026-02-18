@@ -44,24 +44,23 @@ jobs:
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
-            TRIGGER: ${{ github.event.action }}
 
             You are reviewing a pull request. The PR branch is already checked out.
 
             **Step 1: Determine context.**
             - Run `gh pr view ${{ github.event.pull_request.number }} --json comments,reviews` to check for existing review comments.
-            - If this is a `synchronize` event (new push) AND there are existing review comments, this is a follow-up review. If this is an `opened` event or there are no prior comments, this is a fresh review.
+            - If there are prior review comments, this is a follow-up review. Otherwise it's a fresh review.
 
             **Step 2: Review accordingly.**
 
-            For a FRESH review (opened, no prior comments):
+            For a FRESH review (no prior review comments):
             - Review the full PR diff for bugs, security issues, and meaningful design concerns.
             - If the PR looks good, just comment "LGTM".
             - If there are issues, use a single comment with short bullet points. Nothing else.
 
-            For a FOLLOW-UP review (synchronize, prior comments exist):
+            For a FOLLOW-UP review (prior review comments exist):
             - Run `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` to read previous review comments.
-            - Focus on what changed in the latest push. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
+            - Check what changed since the last review. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
             - Do not repeat addressed feedback.
             - If everything looks good, just comment "LGTM". If there are new issues, bullet points only.
 
