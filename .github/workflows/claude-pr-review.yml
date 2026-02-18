@@ -1,0 +1,74 @@
+name: Claude PR Review
+
+on:
+  workflow_call:
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  claude-interactive:
+    if: |
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 10
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
+
+  claude-auto-review:
+    if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are reviewing a pull request. The PR branch is already checked out.
+
+            **Step 1: Determine context.**
+            - Run `gh pr view ${{ github.event.pull_request.number }} --json comments,reviews` to check for existing review comments.
+            - If there are prior review comments, this is a follow-up review. Otherwise it's a fresh review.
+
+            **Step 2: Review accordingly.**
+
+            For a FRESH review (no prior review comments):
+            - Review the full PR diff for bugs, security issues, and meaningful design concerns.
+            - If the PR looks good, just comment "LGTM".
+            - If there are issues, use a single comment with short bullet points. Nothing else.
+
+            For a FOLLOW-UP review (prior review comments exist):
+            - Run `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` to read previous review comments.
+            - Check what changed since the last review. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
+            - Do not repeat addressed feedback.
+            - If everything looks good, just comment "LGTM". If there are new issues, bullet points only.
+
+            **Step 3: Post feedback.**
+            - Use `gh pr comment ${{ github.event.pull_request.number }}` for your feedback.
+            - Only post GitHub comments — don't submit review text as messages.
+            - Aim for the shortest useful review. Brevity is a feature.
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 10
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"

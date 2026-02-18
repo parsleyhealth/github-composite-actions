@@ -15,6 +15,8 @@ Utility composite and docker actions for Parsley Workflows
 - [`setup-node`](./setup-node/README.md) replacement for `actions/setup-node`
 - [`db-init-action`](./db-init-action/README.md) replacement for `actions/setup-node`
 
+- [`claude-pr-review`](./.github/workflows/claude-pr-review.yml) reusable workflow for automatic Claude Code PR reviews (auto-review on PR open/push, interactive via `@claude` comments)
+
 ## Contributing
 
 - make sure to add documentation to a `README.md` in a well-named subfolder

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.5.0]
+
+### Added
+
+- `claude-pr-review` reusable workflow for automatic Claude Code PR reviews across repos
+
 ## [v7.4.2]
 
 ### Updated
