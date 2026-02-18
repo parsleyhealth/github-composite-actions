@@ -28,7 +28,7 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: |
             --model claude-sonnet-4-6
-            --max-turns 10
+            --max-turns 20
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
             --append-system-prompt "Be concise. Use short bullet points when listing issues. Avoid unnecessary preamble or summaries. Brevity is a feature."
 
@@ -71,5 +71,5 @@ jobs:
             - Aim for the shortest useful review. Brevity is a feature.
           claude_args: |
             --model claude-sonnet-4-6
-            --max-turns 10
+            --max-turns 20
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
