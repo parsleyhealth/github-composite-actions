@@ -56,18 +56,22 @@ jobs:
 
             For a FRESH review (opened, no prior comments):
             - Review the full PR diff with a focus on: code quality, potential bugs, security implications, and performance.
-            - Be thorough but concise. Group related feedback together.
+            - Only flag things that actually matter: bugs, security issues, meaningful design concerns.
+            - Skip nitpicks, style preferences, and minor suggestions. Do not comment on things that are fine.
+            - Use a single comment with short bullet points grouped by severity (bugs > security > design > other).
+            - If the PR looks good, just say so in 1-2 sentences. No need for a lengthy summary.
 
             For a FOLLOW-UP review (synchronize, prior comments exist):
             - Run `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` to read previous review comments.
             - Focus on what changed in the latest push. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
-            - Check if previous feedback was addressed. Acknowledge what was fixed.
-            - Only raise NEW issues or re-emphasize critical unresolved ones. Do not repeat feedback that was already addressed.
-            - If everything looks good, a brief "Changes look good, previous feedback addressed" is sufficient.
+            - Check if previous feedback was addressed.
+            - Only raise NEW issues or re-emphasize critical unresolved ones. Do not repeat addressed feedback.
+            - Keep it short: "Previous feedback addressed, LGTM" is a perfectly valid review.
 
             **Step 3: Post feedback.**
             - Use `gh pr comment ${{ github.event.pull_request.number }}` for your feedback.
             - Only post GitHub comments — don't submit review text as messages.
+            - Aim for the shortest useful review. Brevity is a feature.
           claude_args: |
             --model claude-opus-4-6
             --max-turns 10
