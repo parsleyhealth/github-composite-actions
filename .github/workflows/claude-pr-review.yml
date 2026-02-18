@@ -30,6 +30,7 @@ jobs:
             --model claude-opus-4-6
             --max-turns 10
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
+            --append-system-prompt "Be concise. Use short bullet points when listing issues. Avoid unnecessary preamble or summaries. Brevity is a feature."
 
   claude-auto-review:
     if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
