@@ -55,15 +55,16 @@ jobs:
             **Step 2: Review accordingly.**
 
             For a FRESH review (no prior review comments):
-            - Review the full PR diff for bugs, security issues, and meaningful design concerns.
-            - If the PR looks good, just comment "LGTM".
-            - If there are issues, use a single comment with short bullet points. Nothing else.
+            - Review the full PR diff for bugs, security issues, meaningful design concerns, and minor nits.
+            - If the PR is clean with no feedback at all, just comment "LGTM".
+            - If the PR is good but you have minor nits, comment "LGTM" followed by short bullet points for the nits.
+            - If there are real issues (bugs, security, design), use a single comment with short bullet points. No preamble.
 
             For a FOLLOW-UP review (prior review comments exist):
             - Run `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` to read previous review comments.
             - Check what changed since the last review. Use `git log --oneline origin/${{ github.event.pull_request.base.ref }}..HEAD` to understand the commit history.
             - Do not repeat addressed feedback.
-            - If everything looks good, just comment "LGTM". If there are new issues, bullet points only.
+            - If everything looks good, comment "LGTM". If there are nits or issues, bullet points only.
 
             **Step 3: Post feedback.**
             - Use `gh pr comment ${{ github.event.pull_request.number }}` for your feedback.
