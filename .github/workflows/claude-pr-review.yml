@@ -25,6 +25,8 @@ jobs:
         with:
           fetch-depth: 1
       - uses: anthropics/claude-code-action@v1
+        id: claude-interactive-review
+        continue-on-error: true
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_args: |
@@ -32,6 +34,13 @@ jobs:
             --max-turns 20
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
             --append-system-prompt "Be concise. Use short bullet points when listing issues. Avoid unnecessary preamble or summaries. Brevity is a feature."
+      - name: Post fallback comment on failure
+        if: steps.claude-interactive-review.outcome == 'failure'
+        run: |
+          gh pr comment ${{ github.event.issue.pull_request && github.event.issue.number || github.event.pull_request.number }} \
+            --body "⚠️ Claude is unavailable right now (API error or budget limit). Please try again later."
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   claude-auto-review:
     if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
@@ -46,6 +55,8 @@ jobs:
         with:
           fetch-depth: 1
       - uses: anthropics/claude-code-action@v1
+        id: claude-review
+        continue-on-error: true
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
@@ -80,3 +91,10 @@ jobs:
             --model claude-sonnet-4-6
             --max-turns 20
             --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*)"
+      - name: Post fallback comment on failure
+        if: steps.claude-review.outcome == 'failure'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "⚠️ Claude review unavailable (API error or budget limit). Please request a human review."
+        env:
+          GH_TOKEN: ${{ github.token }}
