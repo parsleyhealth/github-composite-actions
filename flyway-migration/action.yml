@@ -3,10 +3,10 @@ description: "Run flyway database migration using cloud sql proxy"
 
 inputs:
   flyway-command:
-    description: "Command to issue to Flyway, ex. `-url=jdbc:postgresql://localhost:5433/api -user=... -password=... migrate`"
+    description: "Command to issue to Flyway, ex. `-url=jdbc:postgresql://localhost:5432/api -user=api_user -schemas=api,public migrate`"
     required: true
   cloud-sql-instance:
-    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5433`"
+    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5432`"
     required: true
   migrations-dir:
     description: "Location of migration files relative from repository root"
