@@ -28,7 +28,7 @@ jobs:
           FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
         with:
           migrations-dir: "/path/to/migrations"
-          cloud-sql-instance: "parsley-development-1:us-east1:sample-database=tcp:5432"
+          cloud-sql-instance: "parsley-development-1:us-east1:sample-database"
           flyway-command: >
             -url=jdbc:postgresql://localhost:5432/dbname
             -user=db_user
@@ -39,7 +39,8 @@ jobs:
 
 ## Inputs
 
-- **cloud-sql-instance**: connection string for the Cloud SQL proxy, format: `<project-id>:<region>:<instance-id>=tcp:<port>`.
+- **cloud-sql-instance**: Cloud SQL instance connection string, format: `<project-id>:<region>:<instance-id>`.
+- **port**: port the Cloud SQL proxy listens on locally; must match the port in `flyway-command`'s JDBC URL (default: `5432`).
 - **migrations-dir**: path to the migration SQL files relative to `$GITHUB_WORKSPACE`, with a leading `/` (e.g. `/data-api/api/src/main/resources/db/migration`).
 - **flyway-command**: Flyway CLI arguments including URL, user and command (e.g. `migrate`, `info`). Do not include `-password` here.
 - **retries**: number of times to retry the command on failure (default: `5`).

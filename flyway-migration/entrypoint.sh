@@ -3,17 +3,18 @@
 [ ! -z $DEBUG ] && [ $DEBUG -eq 1 ] && set -x
 
 if [ -z "$FLYWAY_COMMAND" ]; then
-    echo "$$FLYWAY_COMMAND has not been set"
+    echo "\$FLYWAY_COMMAND has not been set"
     exit 1
 fi
 
 if [ -z "$CLOUD_SQL_INSTANCE" ]; then
-    echo "$$CLOUD_SQL_INSTANCE has not been set"
+    echo "\$CLOUD_SQL_INSTANCE has not been set"
     exit 1
 fi
 
 if [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
-    echo "$$GOOGLE_APPLICATION_CREDENTIALS has not been set, cannot connect to CloudSQL"
+    echo "\$GOOGLE_APPLICATION_CREDENTIALS has not been set, cannot connect to CloudSQL"
+    exit 1
 fi
 
 conn_retries=${1:-5}
@@ -43,10 +44,13 @@ run_w_retry() {
 }
 
 # Start a headless cloudsql proxy and capture pid
-/cloud_sql_proxy \
-    -credential_file ${GOOGLE_APPLICATION_CREDENTIALS} \
-    -instances=${CLOUD_SQL_INSTANCE} &
+/cloud-sql-proxy \
+    --credentials-file=${GOOGLE_APPLICATION_CREDENTIALS} \
+    --port=${PROXY_PORT:-5432} \
+    ${CLOUD_SQL_INSTANCE} &
 echo $! >${csp_pid}
+
+sleep 2
 
 if ! kill -0 $(cat ${csp_pid}) 2>/dev/null; then
     echo "Cloud SQL proxy failed to start"

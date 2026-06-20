@@ -6,8 +6,12 @@ inputs:
     description: "Command to issue to Flyway, ex. `-url=jdbc:postgresql://localhost:5432/api -user=api_user -schemas=api,public migrate`"
     required: true
   cloud-sql-instance:
-    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb=tcp:5432`"
+    description: "CloudSQL instance connection string, ex. `parsley-development:us-east1:somedb`"
     required: true
+  port:
+    description: "Port the Cloud SQL proxy listens on locally; must match the port in flyway-command's JDBC URL"
+    required: false
+    default: "5432"
   migrations-dir:
     description: "Location of migration files relative from repository root"
     required: false
@@ -24,5 +28,6 @@ runs:
     FLYWAY_COMMAND: ${{ inputs.flyway-command }}
     MIGRATIONS_DIR: ${{ inputs.migrations-dir }}
     CLOUD_SQL_INSTANCE: ${{ inputs.cloud-sql-instance }}
+    PROXY_PORT: ${{ inputs.port }}
   args:
     - ${{ inputs.retries }}

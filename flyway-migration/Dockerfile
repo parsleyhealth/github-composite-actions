@@ -1,10 +1,10 @@
-FROM gcr.io/cloudsql-docker/gce-proxy AS cloudsql-proxy
+FROM gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.22.1 AS cloudsql-proxy
 
 FROM flyway/flyway:7.15.0
 
 USER root
-COPY --from=cloudsql-proxy /cloud_sql_proxy /cloud_sql_proxy
-RUN chmod +x /cloud_sql_proxy
+COPY --from=cloudsql-proxy /cloud-sql-proxy /cloud-sql-proxy
+RUN chmod +x /cloud-sql-proxy
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
