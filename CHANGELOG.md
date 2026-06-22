@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.6.0]
+
+### Added
+
+- `flyway-migration` composite action for running Flyway database migrations against Cloud SQL instances
+
 ## [v7.5.0]
 
 ### Added
