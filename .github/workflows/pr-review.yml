@@ -1,0 +1,316 @@
+name: PR Review
+
+# Multi-pass pull request review on Vertex AI.
+#
+#   preflight    decides whether the PR is worth reviewing and pins the diff range
+#   passes       four Gemini passes in parallel, each emitting findings JSON
+#   final-round  Claude verifies every finding against the code and posts one review
+#
+# Callers must set the repository variables GCP_WIF_PROVIDER and GCP_PR_REVIEWER_SA.
+# See pr-review/README.md.
+
+on:
+  workflow_call:
+    inputs:
+      gcp_project_id:
+        description: "GCP project that hosts the Vertex AI endpoint"
+        type: string
+        required: false
+        default: "parsley-staging-1"
+      gcp_location:
+        # Do not pin a region. `global` is the only location the final round can
+        # run in: probing parsley-staging-1 found us-central1 returns 400 (model
+        # not servable) and us-east5 returns 429 on the first token (no quota).
+        # Gemini Flash is served from `global` only as well.
+        description: "Vertex AI location"
+        type: string
+        required: false
+        default: "global"
+      gcp_workload_identity_provider:
+        description: "Full resource name of the workload identity provider"
+        type: string
+        required: true
+      gcp_service_account:
+        description: "Service account email the workflow impersonates"
+        type: string
+        required: true
+      gemini_model:
+        description: "Gemini model that runs the four passes"
+        type: string
+        required: false
+        default: "gemini-3.8-flash"
+      final_model:
+        description: "Claude model that verifies the findings and posts the review"
+        type: string
+        required: false
+        default: "claude-opus-5"
+      node_version:
+        description: "Node version to set up before installing dependencies"
+        type: string
+        required: false
+        default: "20"
+      install_command:
+        description: "Command that installs dependencies. Leave empty for repositories that need none."
+        type: string
+        required: false
+        default: ""
+      typecheck_command:
+        description: "Command that typechecks the repository. Leave empty to skip typechecking."
+        type: string
+        required: false
+        default: ""
+      test_command:
+        description: "Command that runs tests. Passes append specific test files to it. Leave empty to skip tests."
+        type: string
+        required: false
+        default: ""
+      knowledge_file:
+        description: "Path to the repository's PR review knowledge file, if it has one"
+        type: string
+        required: false
+        default: ".github/pr-review-knowledge.md"
+    secrets:
+      NPM_TOKEN:
+        description: "Token for private npm packages, exported as YARN_NPM_AUTH_TOKEN during install"
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      skip: ${{ steps.decide.outputs.skip }}
+      skip_reason: ${{ steps.decide.outputs.skip_reason }}
+      base_sha: ${{ steps.decide.outputs.base_sha }}
+      head_sha: ${{ steps.decide.outputs.head_sha }}
+      changed_files: ${{ steps.decide.outputs.changed_files }}
+    steps:
+      - name: Decide whether to review
+        id: decide
+        run: |
+          set -euo pipefail
+
+          emit() { printf '%s=%s\n' "$1" "$2" >> "${GITHUB_OUTPUT}"; }
+
+          # `pull_request.base.sha` is the tip of the base branch, not the merge
+          # base, so a two-dot diff against it would also show whatever landed on
+          # the base branch since. Ask GitHub for the real merge base instead.
+          MERGE_BASE="$(gh api "repos/${REPO}/compare/${BASE_REF_SHA}...${HEAD_SHA}" --jq '.merge_base_commit.sha' || true)"
+          emit base_sha "${MERGE_BASE:-${BASE_REF_SHA}}"
+          emit head_sha "${HEAD_SHA}"
+
+          PR_JSON="$(gh pr view "${PR_NUMBER}" --repo "${REPO}" --json isDraft,author,files)"
+          IS_DRAFT="$(jq -r '.isDraft' <<< "${PR_JSON}")"
+          AUTHOR="$(jq -r '.author.login // ""' <<< "${PR_JSON}")"
+
+          FILES=()
+          while IFS= read -r line; do
+            [[ -n "${line}" ]] && FILES+=("${line}")
+          done < <(jq -r '.files[].path' <<< "${PR_JSON}")
+
+          skip() {
+            emit skip "true"
+            emit skip_reason "$1"
+            emit changed_files ""
+            echo "Skipping review: $1"
+            exit 0
+          }
+
+          if [[ "${IS_DRAFT}" == "true" ]]; then
+            skip "pull request is a draft"
+          fi
+
+          if [[ ${#FILES[@]} -eq 0 ]]; then
+            skip "pull request changes no files"
+          fi
+
+          # Documentation-only changes are not worth four model passes.
+          DOCS_ONLY=true
+          for f in "${FILES[@]}"; do
+            if [[ "${f}" != *.md && "${f}" != *.mdx && "${f}" != docs/* ]]; then
+              DOCS_ONLY=false
+              break
+            fi
+          done
+          if [[ "${DOCS_ONLY}" == "true" ]]; then
+            skip "documentation-only change"
+          fi
+
+          # A dependency bot that only moves lockfiles and manifests has nothing
+          # for a reviewer to read.
+          if [[ "${AUTHOR}" == *dependabot* ]]; then
+            DEPS_ONLY=true
+            for f in "${FILES[@]}"; do
+              case "${f##*/}" in
+                yarn.lock|package-lock.json|pnpm-lock.yaml|package.json|go.mod|go.sum|Gemfile.lock|poetry.lock|requirements.txt|Cargo.lock|Cargo.toml) ;;
+                *) DEPS_ONLY=false; break ;;
+              esac
+            done
+            if [[ "${DEPS_ONLY}" == "true" ]]; then
+              skip "dependency bump touching only lockfiles and manifests"
+            fi
+          fi
+
+          emit skip "false"
+          emit skip_reason ""
+
+          # Cap the list so a sweeping rename does not crowd out the prompt.
+          {
+            echo "changed_files<<CHANGED_FILES_EOF"
+            printf '%s\n' "${FILES[@]:0:200}"
+            if [[ ${#FILES[@]} -gt 200 ]]; then
+              echo "... and $((${#FILES[@]} - 200)) more files"
+            fi
+            echo "CHANGED_FILES_EOF"
+          } >> "${GITHUB_OUTPUT}"
+
+          echo "Reviewing ${#FILES[@]} changed file(s)."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+  passes:
+    name: Pass (${{ matrix.pass }})
+    needs: preflight
+    if: needs.preflight.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        pass: [correctness, security, conventions, tests]
+    steps:
+      # A full clone is too slow on large repositories, so take the head commit
+      # and then add just the merge base, which is all `git diff` needs.
+      - name: Checkout head commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preflight.outputs.head_sha }}
+          fetch-depth: 1
+
+      - name: Fetch merge base
+        run: git fetch --no-tags --depth=1 origin "${BASE_SHA}"
+        env:
+          BASE_SHA: ${{ needs.preflight.outputs.base_sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        if: hashFiles('yarn.lock') != ''
+        run: echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore yarn cache
+        if: hashFiles('yarn.lock') != ''
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn4-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn4-
+
+      - name: Install dependencies
+        if: inputs.install_command != ''
+        # Run through an environment variable rather than interpolating the input
+        # into the script body, so the command cannot alter the step around it.
+        run: bash -c "${INSTALL_COMMAND}"
+        env:
+          INSTALL_COMMAND: ${{ inputs.install_command }}
+          HUSKY: 0
+          DO_NOT_TRACK: 1
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run review pass
+        # TODO: repoint to @main once this branch merges, then to the version tag.
+        uses: parsleyhealth/github-composite-actions/pr-review/gemini-pass@matts/vertex-pr-review
+        with:
+          pass: ${{ matrix.pass }}
+          gemini_model: ${{ inputs.gemini_model }}
+          gcp_project_id: ${{ inputs.gcp_project_id }}
+          gcp_location: ${{ inputs.gcp_location }}
+          gcp_workload_identity_provider: ${{ inputs.gcp_workload_identity_provider }}
+          gcp_service_account: ${{ inputs.gcp_service_account }}
+          pr_number: ${{ github.event.pull_request.number }}
+          base_sha: ${{ needs.preflight.outputs.base_sha }}
+          head_sha: ${{ needs.preflight.outputs.head_sha }}
+          changed_files: ${{ needs.preflight.outputs.changed_files }}
+          typecheck_command: ${{ inputs.typecheck_command }}
+          test_command: ${{ inputs.test_command }}
+          knowledge_file: ${{ inputs.knowledge_file }}
+
+      - name: Upload findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: findings-${{ matrix.pass }}
+          path: findings-${{ matrix.pass }}.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  final-round:
+    name: Final round
+    needs: [preflight, passes]
+    # `always()` so a pass that fails or times out still gets a review posted from
+    # whatever the other three found. Preflight must have succeeded, though, since
+    # its outputs are what pin the diff range.
+    if: always() && needs.preflight.result == 'success' && needs.preflight.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout head commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preflight.outputs.head_sha }}
+          fetch-depth: 1
+
+      - name: Fetch merge base
+        run: git fetch --no-tags --depth=1 origin "${BASE_SHA}"
+        env:
+          BASE_SHA: ${{ needs.preflight.outputs.base_sha }}
+
+      - name: Download findings
+        uses: actions/download-artifact@v4
+        with:
+          path: findings
+          pattern: findings-*
+          merge-multiple: true
+
+      - name: Verify findings and post review
+        # TODO: repoint to @main once this branch merges, then to the version tag.
+        uses: parsleyhealth/github-composite-actions/pr-review/final-round@matts/vertex-pr-review
+        with:
+          model: ${{ inputs.final_model }}
+          gcp_project_id: ${{ inputs.gcp_project_id }}
+          gcp_location: ${{ inputs.gcp_location }}
+          gcp_workload_identity_provider: ${{ inputs.gcp_workload_identity_provider }}
+          gcp_service_account: ${{ inputs.gcp_service_account }}
+          pr_number: ${{ github.event.pull_request.number }}
+          base_sha: ${{ needs.preflight.outputs.base_sha }}
+          head_sha: ${{ needs.preflight.outputs.head_sha }}
+          findings_dir: findings
+          knowledge_file: ${{ inputs.knowledge_file }}

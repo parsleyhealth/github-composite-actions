@@ -1,0 +1,130 @@
+name: Gemini PR review pass
+description: Run one focused Gemini review pass over a pull request diff and emit its findings as JSON
+
+inputs:
+  pass:
+    description: "Which review pass to run: correctness, security, conventions or tests"
+    required: true
+  gemini_model:
+    description: "Gemini model to run the pass with"
+    required: false
+    default: "gemini-3.8-flash"
+  gcp_project_id:
+    description: "GCP project that hosts the Vertex AI endpoint"
+    required: true
+  gcp_location:
+    description: "Vertex AI location"
+    required: false
+    default: "global"
+  gcp_workload_identity_provider:
+    description: "Full resource name of the workload identity provider"
+    required: true
+  gcp_service_account:
+    description: "Service account email the workflow impersonates"
+    required: true
+  pr_number:
+    description: "Pull request number under review"
+    required: true
+  base_sha:
+    description: "Merge base commit the diff is taken from"
+    required: true
+  head_sha:
+    description: "Head commit under review"
+    required: true
+  changed_files:
+    description: "Newline-separated list of files the pull request changes"
+    required: true
+  typecheck_command:
+    description: "Command that typechecks the repository. Leave empty to skip typechecking."
+    required: false
+    default: ""
+  test_command:
+    description: "Command that runs tests. The pass appends specific test files to it. Leave empty to skip tests."
+    required: false
+    default: ""
+  knowledge_file:
+    description: "Path to the repository's PR review knowledge file, if it has one"
+    required: false
+    default: ".github/pr-review-knowledge.md"
+
+outputs:
+  findings_file:
+    description: "Path to the findings JSON this pass produced"
+    value: "${{ steps.normalize.outputs.findings_file }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: "${{ inputs.gcp_project_id }}"
+        workload_identity_provider: "${{ inputs.gcp_workload_identity_provider }}"
+        service_account: "${{ inputs.gcp_service_account }}"
+        token_format: "access_token"
+
+    # The Gemini CLI runs under --yolo, which carries a Default-tier rule allowing
+    # every tool. User-tier policies (base priority 4) outrank it, so they are the
+    # only place a restriction holds. Workspace-tier policies are currently a no-op
+    # upstream, which is why this writes to $HOME rather than the checkout.
+    - name: Restrict Gemini tools with a user policy
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/write-policy.sh"
+      env:
+        TYPECHECK_COMMAND: "${{ inputs.typecheck_command }}"
+        TEST_COMMAND: "${{ inputs.test_command }}"
+
+    - name: Build pass prompt
+      id: prompt
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/build-prompt.sh"
+      env:
+        PASS: "${{ inputs.pass }}"
+        REPO: "${{ github.repository }}"
+        PR_NUMBER: "${{ inputs.pr_number }}"
+        BASE_SHA: "${{ inputs.base_sha }}"
+        HEAD_SHA: "${{ inputs.head_sha }}"
+        CHANGED_FILES: "${{ inputs.changed_files }}"
+        TYPECHECK_COMMAND: "${{ inputs.typecheck_command }}"
+        TEST_COMMAND: "${{ inputs.test_command }}"
+        KNOWLEDGE_FILE: "${{ inputs.knowledge_file }}"
+
+    - name: Run Gemini pass
+      id: gemini
+      uses: google-github-actions/run-gemini-cli@v0
+      with:
+        use_vertex_ai: "true"
+        gcp_project_id: "${{ inputs.gcp_project_id }}"
+        gcp_location: "${{ inputs.gcp_location }}"
+        gemini_model: "${{ inputs.gemini_model }}"
+        prompt: "${{ steps.prompt.outputs.value }}"
+        # Credentials come from the auth step above, so the workload identity inputs
+        # are deliberately not passed here: handing them to the action would make it
+        # authenticate a second time and start an OpenTelemetry collector container.
+        settings: |
+          {
+            "model": { "maxSessionTurns": 40 },
+            "privacy": { "usageStatisticsEnabled": false },
+            "telemetry": { "enabled": false },
+            "tools": {
+              "core": [
+                "read_file",
+                "read_many_files",
+                "list_directory",
+                "glob",
+                "grep_search",
+                "run_shell_command"
+              ]
+            }
+          }
+
+    - name: Normalize findings
+      id: normalize
+      if: always()
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/normalize-findings.sh"
+      env:
+        PASS: "${{ inputs.pass }}"
+        RAW_OUTPUT: "${{ steps.gemini.outputs.summary }}"
+        RAW_ERROR: "${{ steps.gemini.outputs.error }}"
