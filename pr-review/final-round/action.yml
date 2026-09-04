@@ -1,0 +1,96 @@
+name: PR review final round
+description: Verify the findings from the Gemini passes against the code and post a single pull request review
+
+inputs:
+  model:
+    description: "Claude model on Vertex AI to verify and post with"
+    required: false
+    default: "claude-opus-5"
+  gcp_project_id:
+    description: "GCP project that hosts the Vertex AI endpoint"
+    required: true
+  gcp_location:
+    description: "Vertex AI location"
+    required: false
+    default: "global"
+  gcp_workload_identity_provider:
+    description: "Full resource name of the workload identity provider"
+    required: true
+  gcp_service_account:
+    description: "Service account email the workflow impersonates"
+    required: true
+  pr_number:
+    description: "Pull request number under review"
+    required: true
+  base_sha:
+    description: "Merge base commit the diff is taken from"
+    required: true
+  head_sha:
+    description: "Head commit under review"
+    required: true
+  findings_dir:
+    description: "Directory holding the findings-*.json files from the passes"
+    required: false
+    default: "findings"
+  knowledge_file:
+    description: "Path to the repository's PR review knowledge file, if it has one"
+    required: false
+    default: ".github/pr-review-knowledge.md"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: "${{ inputs.gcp_project_id }}"
+        workload_identity_provider: "${{ inputs.gcp_workload_identity_provider }}"
+        service_account: "${{ inputs.gcp_service_account }}"
+        token_format: "access_token"
+
+    - name: Build final round prompt
+      id: prompt
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/build-prompt.sh"
+      env:
+        REPO: "${{ github.repository }}"
+        PR_NUMBER: "${{ inputs.pr_number }}"
+        BASE_SHA: "${{ inputs.base_sha }}"
+        HEAD_SHA: "${{ inputs.head_sha }}"
+        FINDINGS_DIR: "${{ inputs.findings_dir }}"
+        KNOWLEDGE_FILE: "${{ inputs.knowledge_file }}"
+
+    - name: Verify findings and post review
+      id: claude
+      uses: anthropics/claude-code-action@v1
+      with:
+        use_vertex: "true"
+        github_token: "${{ github.token }}"
+        prompt: "${{ steps.prompt.outputs.value }}"
+        claude_args: |
+          --model ${{ inputs.model }}
+          --max-turns 50
+          --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh api:*),Bash(cat:*),Bash(jq:*)"
+      env:
+        CLAUDE_CODE_USE_VERTEX: "1"
+        CLOUD_ML_REGION: "${{ inputs.gcp_location }}"
+        ANTHROPIC_VERTEX_PROJECT_ID: "${{ inputs.gcp_project_id }}"
+        # Every alias is pinned so Claude Code can never resolve a model that is
+        # not enabled in this project. Sonnet 4.6 is the floor for the small-model
+        # aliases because Haiku is not enabled in Model Garden here.
+        ANTHROPIC_MODEL: "${{ inputs.model }}"
+        ANTHROPIC_DEFAULT_OPUS_MODEL: "${{ inputs.model }}"
+        ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
+        ANTHROPIC_DEFAULT_HAIKU_MODEL: "claude-sonnet-4-6"
+
+    - name: Post fallback comment on failure
+      if: failure()
+      shell: bash
+      run: |
+        gh pr comment "${PR_NUMBER}" \
+          --body "⚠️ The automated PR review could not run (see the [workflow run](${RUN_URL})). Please request a human review."
+      env:
+        GH_TOKEN: "${{ github.token }}"
+        PR_NUMBER: "${{ inputs.pr_number }}"
+        RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

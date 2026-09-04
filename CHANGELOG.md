@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.7.0]
+
+### Added
+
+- `pr-review` reusable workflow and composite actions: four parallel Gemini passes on Vertex AI
+  followed by a Claude final round that verifies the findings and posts one pull request review
+
 ## [v7.6.0]
 
 ### Added

@@ -17,6 +17,7 @@ Utility composite and docker actions for Parsley Workflows
 - [`db-init-action`](./db-init-action/README.md) replacement for `actions/setup-node`
 
 - [`claude-pr-review`](./.github/workflows/claude-pr-review.yml) reusable workflow for automatic Claude Code PR reviews (auto-review on PR open/push, interactive via `@claude` comments)
+- [`pr-review`](./pr-review/README.md) reusable workflow for multi-pass PR reviews on Vertex AI (parallel Gemini passes, Claude final round, one posted review)
 
 ## Contributing
 
