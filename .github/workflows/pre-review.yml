@@ -1,0 +1,27 @@
+name: pre-review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pre-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  # Not named "pre-review": the check run created by the action owns that name.
+  pre-review-runner:
+    if: github.event_name == 'pull_request' || (github.event.issue.pull_request && contains(github.event.comment.body, 'parsley-pre-review'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: parsleyhealth/parsley-actions-private/.github/actions/pre-review-check@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
