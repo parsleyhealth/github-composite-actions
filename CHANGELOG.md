@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `claude-pr-review` input `review_on_open`, off by default. When it is on, the auto-review also runs when a pull request that is not a draft is opened or marked ready for review. Pull requests from bots are skipped.
+- `claude-pr-review` input `review_on_open`, off by default. When it is on, the auto-review also runs when a pull request that is not a draft is opened or marked ready for review. Runs started by a bot are skipped.
 
 ## [v7.6.0]
 

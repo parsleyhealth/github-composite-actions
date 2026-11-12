@@ -6,7 +6,7 @@ on:
       review_on_open:
         description: >-
           Also run the auto-review when a pull request that is not a draft is
-          opened or marked ready for review. Pull requests from bots are
+          opened or marked ready for review. Runs started by a bot are
           skipped. The caller must also list `opened` and `ready_for_review`
           in its `pull_request` types. If it does not, those events never
           start this workflow.
@@ -56,13 +56,14 @@ jobs:
   claude-auto-review:
     # A reviewer that a workflow requests with GITHUB_TOKEN starts no
     # review_requested run. review_on_open covers repos that pick reviewers
-    # with a workflow. Bot authors are skipped because the action rejects
+    # with a workflow. Bot actors are skipped because the action rejects
     # non-human actors and Dependabot runs get no ANTHROPIC_API_KEY.
+    # Both rules depend on the actor, not on the PR author.
     if: |
       github.event_name == 'pull_request' && (
         github.event.action == 'review_requested' ||
         (inputs.review_on_open && !github.event.pull_request.draft &&
-          github.event.pull_request.user.type != 'Bot' &&
+          !endsWith(github.actor, '[bot]') &&
           (github.event.action == 'opened' || github.event.action == 'ready_for_review'))
       )
     runs-on: ubuntu-latest
