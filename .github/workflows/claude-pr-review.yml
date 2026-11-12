@@ -2,6 +2,15 @@ name: Claude PR Review
 
 on:
   workflow_call:
+    inputs:
+      review_on_open:
+        description: >-
+          Also run the auto-review when a pull request that is not a draft is
+          opened or marked ready for review. The caller must also list
+          `opened` and `ready_for_review` in its `pull_request` types.
+        type: boolean
+        required: false
+        default: false
     secrets:
       ANTHROPIC_API_KEY:
         required: true
@@ -43,7 +52,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   claude-auto-review:
-    if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
+    # A reviewer that a workflow requests with GITHUB_TOKEN starts no
+    # review_requested run. review_on_open covers repos that pick reviewers
+    # with a workflow.
+    if: |
+      github.event_name == 'pull_request' && (
+        github.event.action == 'review_requested' ||
+        (inputs.review_on_open && !github.event.pull_request.draft &&
+          (github.event.action == 'opened' || github.event.action == 'ready_for_review'))
+      )
     runs-on: ubuntu-latest
     concurrency:
       group: claude-review-${{ github.ref }}
